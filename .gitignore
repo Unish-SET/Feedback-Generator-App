@@ -1,0 +1,49 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# IDE specific settings
+.vscode/
+.idea/
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# appsettings.Development.json
+# (If you want to keep development settings secret)
+# appsettings.Development.json
+
+# Local databases
+*.ldf
+*.mdf
+
+# Entity Framework Core
+*.db
+*.db-shm
+*.db-wal
