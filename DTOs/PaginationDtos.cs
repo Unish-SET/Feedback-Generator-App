@@ -16,6 +16,11 @@ namespace FeedBackGeneratorApp.DTOs
         public string? SearchTerm { get; set; }
         public string? SortBy { get; set; }
         public bool SortDescending { get; set; } = false;
+
+        /// <summary>
+        /// Filter by question type: MultipleChoice, OpenText, Rating, YesNo
+        /// </summary>
+        public string? QuestionType { get; set; }
     }
 
     public class PagedResult<T>

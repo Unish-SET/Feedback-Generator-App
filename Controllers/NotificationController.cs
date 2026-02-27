@@ -8,7 +8,7 @@ namespace FeedBackGeneratorApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin,Staff,Viewer,Respondent")]  // all authenticated roles
     public class NotificationController : ControllerBase
     {
         private readonly INotificationService _notificationService;
@@ -18,6 +18,7 @@ namespace FeedBackGeneratorApp.Controllers
             _notificationService = notificationService;
         }
 
+        // Any authenticated role — own notifications only
         [HttpGet]
         public async Task<ActionResult<PagedResult<NotificationResponseDto>>> GetMyNotifications([FromQuery] PaginationParams paginationParams)
         {
@@ -26,6 +27,7 @@ namespace FeedBackGeneratorApp.Controllers
             return Ok(notifications);
         }
 
+        // Any authenticated role
         [HttpGet("unread-count")]
         public async Task<ActionResult<int>> GetUnreadCount()
         {
@@ -34,6 +36,7 @@ namespace FeedBackGeneratorApp.Controllers
             return Ok(new { count });
         }
 
+        // Any authenticated role — mark own notification as read
         [HttpPut("{id}/mark-read")]
         public async Task<ActionResult> MarkAsRead(int id)
         {

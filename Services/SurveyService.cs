@@ -157,6 +157,13 @@ namespace FeedBackGeneratorApp.Services
                     || s.Description.ToLower().Contains(search));
             }
 
+            // Filter by question type
+            if (!string.IsNullOrWhiteSpace(paginationParams.QuestionType))
+            {
+                var qType = paginationParams.QuestionType;
+                query = query.Where(s => s.Questions.Any(q => q.QuestionType == qType));
+            }
+
             // Sort
             query = paginationParams.SortBy?.ToLower() switch
             {
@@ -200,6 +207,13 @@ namespace FeedBackGeneratorApp.Services
                 var search = paginationParams.SearchTerm.ToLower();
                 query = query.Where(s => s.Title.ToLower().Contains(search)
                     || s.Description.ToLower().Contains(search));
+            }
+
+            // Filter by question type
+            if (!string.IsNullOrWhiteSpace(paginationParams.QuestionType))
+            {
+                var qType = paginationParams.QuestionType;
+                query = query.Where(s => s.Questions.Any(q => q.QuestionType == qType));
             }
 
             // Sort

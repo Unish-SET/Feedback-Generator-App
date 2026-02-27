@@ -17,23 +17,27 @@ namespace FeedBackGeneratorApp.Controllers
             _templateService = templateService;
         }
 
+        // Admin, Staff can create templates
         [HttpPost]
+        [Authorize(Roles = "Admin,Staff")]
         public async Task<ActionResult<TemplateResponseDto>> CreateTemplate([FromBody] CreateTemplateDto dto)
         {
             var result = await _templateService.CreateTemplateAsync(dto);
             return CreatedAtAction(nameof(GetTemplate), new { id = result.Id }, result);
         }
 
+        // Admin, Staff, Viewer can list templates (removed [AllowAnonymous] — internal blueprints)
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin,Staff,Viewer")]
         public async Task<ActionResult<IEnumerable<TemplateResponseDto>>> GetAllTemplates()
         {
             var templates = await _templateService.GetAllTemplatesAsync();
             return Ok(templates);
         }
 
+        // Admin, Staff, Viewer can view a template
         [HttpGet("{id}")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin,Staff,Viewer")]
         public async Task<ActionResult<TemplateResponseDto>> GetTemplate(int id)
         {
             var template = await _templateService.GetTemplateByIdAsync(id);
@@ -41,7 +45,9 @@ namespace FeedBackGeneratorApp.Controllers
             return Ok(template);
         }
 
+        // Admin only can delete templates
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteTemplate(int id)
         {
             var deleted = await _templateService.DeleteTemplateAsync(id);

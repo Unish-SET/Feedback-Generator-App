@@ -18,7 +18,9 @@ namespace FeedBackGeneratorApp.Controllers
             _recipientService = recipientService;
         }
 
+        // Admin, Staff can add recipients
         [HttpPost]
+        [Authorize(Roles = "Admin,Staff")]
         public async Task<ActionResult<RecipientResponseDto>> AddRecipient([FromBody] CreateRecipientDto dto)
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
@@ -26,7 +28,9 @@ namespace FeedBackGeneratorApp.Controllers
             return Ok(result);
         }
 
+        // Admin, Staff, Viewer can list recipients
         [HttpGet]
+        [Authorize(Roles = "Admin,Staff,Viewer")]
         public async Task<ActionResult<PagedResult<RecipientResponseDto>>> GetAllRecipients([FromQuery] PaginationParams paginationParams)
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
@@ -34,7 +38,9 @@ namespace FeedBackGeneratorApp.Controllers
             return Ok(recipients);
         }
 
+        // Admin, Staff, Viewer can filter by group
         [HttpGet("group/{groupName}")]
+        [Authorize(Roles = "Admin,Staff,Viewer")]
         public async Task<ActionResult<PagedResult<RecipientResponseDto>>> GetRecipientsByGroup(string groupName, [FromQuery] PaginationParams paginationParams)
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
@@ -42,7 +48,9 @@ namespace FeedBackGeneratorApp.Controllers
             return Ok(recipients);
         }
 
+        // Admin, Staff can delete recipients
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin,Staff")]
         public async Task<ActionResult> DeleteRecipient(int id)
         {
             var deleted = await _recipientService.DeleteRecipientAsync(id);
@@ -50,7 +58,9 @@ namespace FeedBackGeneratorApp.Controllers
             return NoContent();
         }
 
+        // Admin, Staff can bulk import
         [HttpPost("import")]
+        [Authorize(Roles = "Admin,Staff")]
         public async Task<ActionResult<IEnumerable<RecipientResponseDto>>> ImportRecipients([FromBody] List<CreateRecipientDto> dtos)
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);

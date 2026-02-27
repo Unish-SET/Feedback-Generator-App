@@ -25,5 +25,6 @@ namespace FeedBackGeneratorApp.Models
         public ICollection<SurveyResponse> SurveyResponses { get; set; } = new List<SurveyResponse>();
         public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
         public ICollection<Recipient> Recipients { get; set; } = new List<Recipient>();
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     }
 }

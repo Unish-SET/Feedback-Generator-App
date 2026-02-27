@@ -18,7 +18,9 @@ namespace FeedBackGeneratorApp.Controllers
             _surveyService = surveyService;
         }
 
+        // Admin, Staff can create surveys
         [HttpPost]
+        [Authorize(Roles = "Admin,Staff")]
         public async Task<ActionResult<SurveyResponseDto>> CreateSurvey([FromBody] CreateSurveyDto dto)
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
@@ -26,6 +28,7 @@ namespace FeedBackGeneratorApp.Controllers
             return CreatedAtAction(nameof(GetSurvey), new { id = result.Id }, result);
         }
 
+        // Public — anyone can browse surveys
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<PagedResult<SurveyResponseDto>>> GetAllSurveys([FromQuery] PaginationParams paginationParams)
@@ -34,6 +37,7 @@ namespace FeedBackGeneratorApp.Controllers
             return Ok(surveys);
         }
 
+        // Public — anyone can view a survey
         [HttpGet("{id}")]
         [AllowAnonymous]
         public async Task<ActionResult<SurveyResponseDto>> GetSurvey(int id)
@@ -43,7 +47,9 @@ namespace FeedBackGeneratorApp.Controllers
             return Ok(survey);
         }
 
+        // Admin, Staff, Viewer can see their own surveys
         [HttpGet("my-surveys")]
+        [Authorize(Roles = "Admin,Staff,Viewer")]
         public async Task<ActionResult<PagedResult<SurveyResponseDto>>> GetMySurveys([FromQuery] PaginationParams paginationParams)
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
@@ -51,7 +57,9 @@ namespace FeedBackGeneratorApp.Controllers
             return Ok(surveys);
         }
 
+        // Admin, Staff can update surveys
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,Staff")]
         public async Task<ActionResult<SurveyResponseDto>> UpdateSurvey(int id, [FromBody] UpdateSurveyDto dto)
         {
             var result = await _surveyService.UpdateSurveyAsync(id, dto);
@@ -59,7 +67,9 @@ namespace FeedBackGeneratorApp.Controllers
             return Ok(result);
         }
 
+        // Admin only can delete surveys
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteSurvey(int id)
         {
             var deleted = await _surveyService.DeleteSurveyAsync(id);
@@ -67,14 +77,18 @@ namespace FeedBackGeneratorApp.Controllers
             return NoContent();
         }
 
+        // Admin, Staff can add questions
         [HttpPost("{surveyId}/questions")]
+        [Authorize(Roles = "Admin,Staff")]
         public async Task<ActionResult<QuestionResponseDto>> AddQuestion(int surveyId, [FromBody] CreateQuestionDto dto)
         {
             var result = await _surveyService.AddQuestionAsync(surveyId, dto);
             return Ok(result);
         }
 
+        // Admin only can delete questions
         [HttpDelete("questions/{questionId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteQuestion(int questionId)
         {
             var deleted = await _surveyService.DeleteQuestionAsync(questionId);

@@ -16,6 +16,7 @@ namespace FeedBackGeneratorApp.Contexts
         public DbSet<Answer> Answers { get; set; }
         public DbSet<SurveyTemplate> SurveyTemplates { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -98,6 +99,17 @@ namespace FeedBackGeneratorApp.Contexts
                       .WithMany(u => u.Notifications)
                       .HasForeignKey(n => n.UserId)
                       .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // RefreshToken
+            modelBuilder.Entity<RefreshToken>(entity =>
+            {
+                entity.HasOne(rt => rt.User)
+                      .WithMany(u => u.RefreshTokens)
+                      .HasForeignKey(rt => rt.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(rt => rt.Token).IsUnique();
             });
         }
     }
