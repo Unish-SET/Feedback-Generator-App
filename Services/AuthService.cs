@@ -1,5 +1,6 @@
 using AutoMapper;
 using FeedBackGeneratorApp.DTOs;
+using FeedBackGeneratorApp.Exceptions;
 using FeedBackGeneratorApp.Helpers;
 using FeedBackGeneratorApp.Interfaces;
 using FeedBackGeneratorApp.Models;
@@ -23,7 +24,7 @@ namespace FeedBackGeneratorApp.Services
         {
             var existingUsers = await _userRepo.FindAsync(u => u.Email == dto.Email);
             if (existingUsers.Any())
-                throw new InvalidOperationException("A user with this email already exists.");
+                throw new ConflictException("A user with this email already exists.");
 
             var user = _mapper.Map<User>(dto);
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
@@ -46,7 +47,7 @@ namespace FeedBackGeneratorApp.Services
             var user = users.FirstOrDefault();
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
-                throw new UnauthorizedAccessException("Invalid email or password.");
+                throw new UnauthorizedException("Invalid email or password.");
 
             var token = _jwtHelper.GenerateToken(user.Id, user.Email, user.Role);
 

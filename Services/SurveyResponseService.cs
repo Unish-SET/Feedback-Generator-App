@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using FeedBackGeneratorApp.Contexts;
 using FeedBackGeneratorApp.DTOs;
+using FeedBackGeneratorApp.Exceptions;
 using FeedBackGeneratorApp.Interfaces;
 using FeedBackGeneratorApp.Models;
 using SurveyResponseEntity = FeedBackGeneratorApp.Models.SurveyResponse;
@@ -32,6 +33,50 @@ namespace FeedBackGeneratorApp.Services
 
         public async Task<SurveyResponseDetailDto> SubmitResponseAsync(SubmitResponseDto dto, int? userId)
         {
+            if (dto.SurveyId <= 0)
+                throw new BadRequestException("Survey ID must be a positive number.");
+
+            // Verify survey exists and is active
+            var survey = await _context.Surveys
+                .Include(s => s.Questions)
+                .FirstOrDefaultAsync(s => s.Id == dto.SurveyId);
+
+            if (survey == null)
+                throw new NotFoundException($"Survey with ID {dto.SurveyId} was not found.");
+
+            if (!survey.IsActive)
+                throw new BadRequestException("This survey is no longer accepting responses.");
+
+            if (survey.ExpiresAt.HasValue && survey.ExpiresAt.Value <= DateTime.UtcNow)
+                throw new BadRequestException($"This survey expired on {survey.ExpiresAt.Value:yyyy-MM-dd HH:mm} UTC. Responses are no longer accepted.");
+
+            // Validate answers
+            if (dto.Answers == null || !dto.Answers.Any())
+                throw new BadRequestException("At least one answer is required.");
+
+            // Check required questions are answered
+            var requiredQuestionIds = survey.Questions
+                .Where(q => q.IsRequired)
+                .Select(q => q.Id)
+                .ToList();
+
+            var answeredQuestionIds = dto.Answers.Select(a => a.QuestionId).ToList();
+            var missingRequired = requiredQuestionIds.Except(answeredQuestionIds).ToList();
+
+            if (missingRequired.Any())
+                throw new BadRequestException($"Required question(s) not answered: {string.Join(", ", missingRequired)}.");
+
+            // Validate each answer references a valid question
+            var validQuestionIds = survey.Questions.Select(q => q.Id).ToList();
+            foreach (var answer in dto.Answers)
+            {
+                if (!validQuestionIds.Contains(answer.QuestionId))
+                    throw new BadRequestException($"Question ID {answer.QuestionId} does not belong to survey {dto.SurveyId}.");
+
+                if (string.IsNullOrWhiteSpace(answer.AnswerText))
+                    throw new BadRequestException($"Answer for question ID {answer.QuestionId} cannot be empty.");
+            }
+
             var surveyResponse = new SurveyResponseEntity
             {
                 SurveyId = dto.SurveyId,
@@ -55,19 +100,18 @@ namespace FeedBackGeneratorApp.Services
             }
 
             // Notify survey creator
-            var survey = await _context.Surveys.FindAsync(dto.SurveyId);
-            if (survey != null)
-            {
-                await _notificationService.CreateNotificationAsync(
-                    survey.CreatedByUserId,
-                    $"New response received for survey: {survey.Title}");
-            }
+            await _notificationService.CreateNotificationAsync(
+                survey.CreatedByUserId,
+                $"New response received for survey: {survey.Title}");
 
-            return await GetResponseByIdAsync(surveyResponse.Id) ?? throw new Exception("Failed to submit response.");
+            return await GetResponseByIdAsync(surveyResponse.Id) ?? throw new BadRequestException("Failed to submit response.");
         }
 
         public async Task<SurveyResponseDetailDto?> GetResponseByIdAsync(int id)
         {
+            if (id <= 0)
+                throw new BadRequestException("Response ID must be a positive number.");
+
             var response = await _context.SurveyResponses
                 .Include(r => r.Survey)
                 .Include(r => r.Answers)
@@ -79,6 +123,18 @@ namespace FeedBackGeneratorApp.Services
 
         public async Task<PagedResult<SurveyResponseDetailDto>> GetResponsesBySurveyAsync(int surveyId, PaginationParams paginationParams)
         {
+            if (surveyId <= 0)
+                throw new BadRequestException("Survey ID must be a positive number.");
+            if (paginationParams.PageNumber <= 0)
+                throw new BadRequestException("Page number must be greater than 0.");
+            if (paginationParams.PageSize <= 0 || paginationParams.PageSize > 100)
+                throw new BadRequestException("Page size must be between 1 and 100.");
+
+            // Verify survey exists
+            var surveyExists = await _context.Surveys.AnyAsync(s => s.Id == surveyId);
+            if (!surveyExists)
+                throw new NotFoundException($"Survey with ID {surveyId} was not found.");
+
             var query = _context.SurveyResponses
                 .Include(r => r.Survey)
                 .Include(r => r.Answers)
@@ -122,23 +178,41 @@ namespace FeedBackGeneratorApp.Services
 
         public async Task<SurveyResponseDetailDto> PauseResponseAsync(int responseId)
         {
+            if (responseId <= 0)
+                throw new BadRequestException("Response ID must be a positive number.");
+
             var response = await _responseRepo.GetByIdAsync(responseId);
-            if (response == null) throw new KeyNotFoundException("Response not found.");
+            if (response == null) throw new NotFoundException($"Response with ID {responseId} was not found.");
+
+            if (!response.IsComplete)
+                throw new BadRequestException("This response is already paused.");
 
             response.IsComplete = false;
             response.CompletedAt = null;
             await _responseRepo.UpdateAsync(response);
 
-            return await GetResponseByIdAsync(responseId) ?? throw new Exception("Failed to pause response.");
+            return await GetResponseByIdAsync(responseId) ?? throw new BadRequestException("Failed to pause response.");
         }
 
         public async Task<SurveyResponseDetailDto> ResumeResponseAsync(int responseId, List<SubmitAnswerDto> additionalAnswers)
         {
+            if (responseId <= 0)
+                throw new BadRequestException("Response ID must be a positive number.");
+
             var response = await _responseRepo.GetByIdAsync(responseId);
-            if (response == null) throw new KeyNotFoundException("Response not found.");
+            if (response == null) throw new NotFoundException($"Response with ID {responseId} was not found.");
+
+            if (response.IsComplete)
+                throw new BadRequestException("This response is already completed. You cannot resume a completed response.");
+
+            if (additionalAnswers == null || !additionalAnswers.Any())
+                throw new BadRequestException("At least one answer is required to resume.");
 
             foreach (var answerDto in additionalAnswers)
             {
+                if (string.IsNullOrWhiteSpace(answerDto.AnswerText))
+                    throw new BadRequestException($"Answer for question ID {answerDto.QuestionId} cannot be empty.");
+
                 var answer = new Answer
                 {
                     SurveyResponseId = responseId,
@@ -152,7 +226,7 @@ namespace FeedBackGeneratorApp.Services
             response.CompletedAt = DateTime.UtcNow;
             await _responseRepo.UpdateAsync(response);
 
-            return await GetResponseByIdAsync(responseId) ?? throw new Exception("Failed to resume response.");
+            return await GetResponseByIdAsync(responseId) ?? throw new BadRequestException("Failed to resume response.");
         }
     }
 }

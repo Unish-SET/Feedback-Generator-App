@@ -1,5 +1,6 @@
 using AutoMapper;
 using FeedBackGeneratorApp.DTOs;
+using FeedBackGeneratorApp.Exceptions;
 using FeedBackGeneratorApp.Interfaces;
 using FeedBackGeneratorApp.Models;
 
@@ -18,6 +19,11 @@ namespace FeedBackGeneratorApp.Services
 
         public async Task<NotificationResponseDto> CreateNotificationAsync(int userId, string message)
         {
+            if (userId <= 0)
+                throw new BadRequestException("User ID must be a positive number.");
+            if (string.IsNullOrWhiteSpace(message))
+                throw new BadRequestException("Notification message cannot be empty.");
+
             var notification = new Notification
             {
                 UserId = userId,
@@ -32,6 +38,11 @@ namespace FeedBackGeneratorApp.Services
 
         public async Task<PagedResult<NotificationResponseDto>> GetUserNotificationsAsync(int userId, PaginationParams paginationParams)
         {
+            if (paginationParams.PageNumber <= 0)
+                throw new BadRequestException("Page number must be greater than 0.");
+            if (paginationParams.PageSize <= 0 || paginationParams.PageSize > 100)
+                throw new BadRequestException("Page size must be between 1 and 100.");
+
             var allNotifications = await _notificationRepo.FindAsync(n => n.UserId == userId);
             var query = allNotifications.AsQueryable();
 
@@ -68,8 +79,15 @@ namespace FeedBackGeneratorApp.Services
 
         public async Task<bool> MarkAsReadAsync(int notificationId)
         {
+            if (notificationId <= 0)
+                throw new BadRequestException("Notification ID must be a positive number.");
+
             var notification = await _notificationRepo.GetByIdAsync(notificationId);
-            if (notification == null) return false;
+            if (notification == null)
+                throw new NotFoundException($"Notification with ID {notificationId} was not found.");
+
+            if (notification.IsRead)
+                throw new BadRequestException("This notification is already marked as read.");
 
             notification.IsRead = true;
             await _notificationRepo.UpdateAsync(notification);

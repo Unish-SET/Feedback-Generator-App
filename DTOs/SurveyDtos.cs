@@ -14,6 +14,16 @@ namespace FeedBackGeneratorApp.DTOs
         public string? BrandingConfig { get; set; }
 
         public List<CreateQuestionDto>? Questions { get; set; }
+
+        /// <summary>
+        /// Optional: Copy all questions from an existing survey into this new one.
+        /// </summary>
+        public int? CopyQuestionsFromSurveyId { get; set; }
+
+        /// <summary>
+        /// Optional: Set a deadline after which the survey auto-closes.
+        /// </summary>
+        public DateTime? ExpiresAt { get; set; }
     }
 
     public class UpdateSurveyDto
@@ -27,6 +37,8 @@ namespace FeedBackGeneratorApp.DTOs
         public bool? IsActive { get; set; }
 
         public string? BrandingConfig { get; set; }
+
+        public DateTime? ExpiresAt { get; set; }
     }
 
     public class SurveyResponseDto
@@ -41,6 +53,9 @@ namespace FeedBackGeneratorApp.DTOs
         public string? BrandingConfig { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public DateTime? ExpiresAt { get; set; }
+        public bool IsExpired => ExpiresAt.HasValue && ExpiresAt.Value <= DateTime.UtcNow;
+        public int TotalResponses { get; set; }
         public string? ShareableLink { get; set; }
         public List<QuestionResponseDto> Questions { get; set; } = new();
     }

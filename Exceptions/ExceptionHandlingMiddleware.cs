@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.Json;
 
-namespace FeedBackGeneratorApp.Middlewares
+namespace FeedBackGeneratorApp.Exceptions
 {
     public class ExceptionHandlingMiddleware
     {
@@ -31,11 +31,12 @@ namespace FeedBackGeneratorApp.Middlewares
         {
             var statusCode = exception switch
             {
-                InvalidOperationException => HttpStatusCode.BadRequest,           // 400
-                UnauthorizedAccessException => HttpStatusCode.Unauthorized,       // 401
-                KeyNotFoundException => HttpStatusCode.NotFound,                  // 404
-                ArgumentException => HttpStatusCode.BadRequest,                   // 400
-                _ => HttpStatusCode.InternalServerError                           // 500
+                ApiException apiEx => apiEx.StatusCode,                              // Custom exceptions
+                InvalidOperationException => HttpStatusCode.BadRequest,             // 400
+                UnauthorizedAccessException => HttpStatusCode.Unauthorized,         // 401
+                KeyNotFoundException => HttpStatusCode.NotFound,                    // 404
+                ArgumentException => HttpStatusCode.BadRequest,                     // 400
+                _ => HttpStatusCode.InternalServerError                             // 500
             };
 
             var response = new

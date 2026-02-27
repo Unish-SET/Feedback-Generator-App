@@ -25,6 +25,8 @@ namespace FeedBackGeneratorApp.Models
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
+        public DateTime? ExpiresAt { get; set; }
+
         // Navigation Properties
         [ForeignKey("CreatedByUserId")]
         public User CreatedByUser { get; set; } = null!;

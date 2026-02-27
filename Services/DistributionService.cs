@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using FeedBackGeneratorApp.Contexts;
 using FeedBackGeneratorApp.DTOs;
+using FeedBackGeneratorApp.Exceptions;
 using FeedBackGeneratorApp.Interfaces;
 using FeedBackGeneratorApp.Models;
 
@@ -22,6 +23,26 @@ namespace FeedBackGeneratorApp.Services
 
         public async Task<DistributionResponseDto> CreateDistributionAsync(CreateDistributionDto dto)
         {
+            if (dto.SurveyId <= 0)
+                throw new BadRequestException("Survey ID must be a positive number.");
+
+            // Verify survey exists
+            var surveyExists = await _context.Surveys.AnyAsync(s => s.Id == dto.SurveyId);
+            if (!surveyExists)
+                throw new NotFoundException($"Survey with ID {dto.SurveyId} was not found.");
+
+            // Validate distribution type
+            var validTypes = new[] { "Link", "Email", "QRCode" };
+            if (string.IsNullOrWhiteSpace(dto.DistributionType))
+                throw new BadRequestException("Distribution type is required.");
+
+            if (!validTypes.Contains(dto.DistributionType))
+                throw new BadRequestException($"Invalid distribution type '{dto.DistributionType}'. Valid types are: {string.Join(", ", validTypes)}.");
+
+            // Validate email distribution has a value
+            if (dto.DistributionType == "Email" && string.IsNullOrWhiteSpace(dto.DistributionValue))
+                throw new BadRequestException("Email distribution requires a recipient email address in the DistributionValue field.");
+
             var distribution = _mapper.Map<SurveyDistribution>(dto);
             distribution.CreatedAt = DateTime.UtcNow;
 
@@ -53,6 +74,14 @@ namespace FeedBackGeneratorApp.Services
 
         public async Task<IEnumerable<DistributionResponseDto>> GetDistributionsBySurveyAsync(int surveyId)
         {
+            if (surveyId <= 0)
+                throw new BadRequestException("Survey ID must be a positive number.");
+
+            // Verify survey exists
+            var surveyExists = await _context.Surveys.AnyAsync(s => s.Id == surveyId);
+            if (!surveyExists)
+                throw new NotFoundException($"Survey with ID {surveyId} was not found.");
+
             var distributions = await _context.SurveyDistributions
                 .Include(d => d.Survey)
                 .Where(d => d.SurveyId == surveyId)
@@ -64,8 +93,12 @@ namespace FeedBackGeneratorApp.Services
 
         public async Task<bool> DeleteDistributionAsync(int id)
         {
+            if (id <= 0)
+                throw new BadRequestException("Distribution ID must be a positive number.");
+
             var distribution = await _distributionRepo.GetByIdAsync(id);
-            if (distribution == null) return false;
+            if (distribution == null)
+                throw new NotFoundException($"Distribution with ID {id} was not found.");
 
             await _distributionRepo.DeleteAsync(distribution);
             return true;
