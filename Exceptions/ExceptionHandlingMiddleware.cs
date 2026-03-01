@@ -31,21 +31,46 @@ namespace FeedBackGeneratorApp.Exceptions
         {
             var statusCode = exception switch
             {
-                ApiException apiEx => apiEx.StatusCode,                              // Custom exceptions
-                InvalidOperationException => HttpStatusCode.BadRequest,             // 400
-                UnauthorizedAccessException => HttpStatusCode.Unauthorized,         // 401
-                KeyNotFoundException => HttpStatusCode.NotFound,                    // 404
-                ArgumentException => HttpStatusCode.BadRequest,                     // 400
-                _ => HttpStatusCode.InternalServerError                             // 500
+                // Custom Application Exceptions (your business rules)
+                ApiException apiEx => apiEx.StatusCode,
+
+                // Database Exceptions (EF Core)
+                Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException => HttpStatusCode.Conflict,       // 409
+                Microsoft.EntityFrameworkCore.DbUpdateException             => HttpStatusCode.BadRequest,     // 400
+
+                // Bad Data / Parsing Exceptions
+                ArgumentNullException      => HttpStatusCode.BadRequest,      // 400
+                ArgumentException          => HttpStatusCode.BadRequest,      // 400
+                InvalidOperationException  => HttpStatusCode.BadRequest,      // 400
+                FormatException            => HttpStatusCode.BadRequest,      // 400
+
+                // Authorization / Access
+                UnauthorizedAccessException => HttpStatusCode.Forbidden,      // 403
+                KeyNotFoundException        => HttpStatusCode.NotFound,       // 404
+
+                // System / Network Constraints
+                TimeoutException           => HttpStatusCode.RequestTimeout,  // 408
+                NotImplementedException    => HttpStatusCode.NotImplemented,  // 501
+
+                // Fallback — catch everything else
+                _ => HttpStatusCode.InternalServerError                       // 500
             };
+
+            // For custom ApiException, the message is developer-controlled and safe to return.
+            // For all other unhandled .NET exceptions, return a generic message to avoid
+            // leaking internal details (stack traces, SQL errors, etc.) to clients.
+            var isApiException = exception is ApiException;
+            var userMessage = isApiException
+                ? exception.Message
+                : "An unexpected error occurred. Please try again later.";
 
             var response = new
             {
                 statusCode = (int)statusCode,
-                message = exception.Message,
+                message = userMessage,
                 details = statusCode == HttpStatusCode.InternalServerError
                     ? "An internal server error occurred. Please try again later."
-                    : exception.Message
+                    : userMessage
             };
 
             context.Response.ContentType = "application/json";

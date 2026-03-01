@@ -88,16 +88,14 @@ namespace FeedBackGeneratorApp.Services
 
             await _responseRepo.AddAsync(surveyResponse);
 
-            foreach (var answerDto in dto.Answers)
+            var answers = dto.Answers.Select(answerDto => new Answer
             {
-                var answer = new Answer
-                {
-                    SurveyResponseId = surveyResponse.Id,
-                    QuestionId = answerDto.QuestionId,
-                    AnswerText = answerDto.AnswerText
-                };
-                await _answerRepo.AddAsync(answer);
-            }
+                SurveyResponseId = surveyResponse.Id,
+                QuestionId = answerDto.QuestionId,
+                AnswerText = answerDto.AnswerText
+            }).ToList();
+
+            await _answerRepo.AddRangeAsync(answers);
 
             // Notify survey creator
             await _notificationService.CreateNotificationAsync(
@@ -208,19 +206,14 @@ namespace FeedBackGeneratorApp.Services
             if (additionalAnswers == null || !additionalAnswers.Any())
                 throw new BadRequestException("At least one answer is required to resume.");
 
-            foreach (var answerDto in additionalAnswers)
+            var answers = additionalAnswers.Select(answerDto => new Answer
             {
-                if (string.IsNullOrWhiteSpace(answerDto.AnswerText))
-                    throw new BadRequestException($"Answer for question ID {answerDto.QuestionId} cannot be empty.");
+                SurveyResponseId = responseId,
+                QuestionId = answerDto.QuestionId,
+                AnswerText = answerDto.AnswerText
+            }).ToList();
 
-                var answer = new Answer
-                {
-                    SurveyResponseId = responseId,
-                    QuestionId = answerDto.QuestionId,
-                    AnswerText = answerDto.AnswerText
-                };
-                await _answerRepo.AddAsync(answer);
-            }
+            await _answerRepo.AddRangeAsync(answers);
 
             response.IsComplete = true;
             response.CompletedAt = DateTime.UtcNow;

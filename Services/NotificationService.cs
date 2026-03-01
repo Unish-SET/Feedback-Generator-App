@@ -1,4 +1,6 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using FeedBackGeneratorApp.Contexts;
 using FeedBackGeneratorApp.DTOs;
 using FeedBackGeneratorApp.Exceptions;
 using FeedBackGeneratorApp.Interfaces;
@@ -8,11 +10,13 @@ namespace FeedBackGeneratorApp.Services
 {
     public class NotificationService : INotificationService
     {
+        private readonly FeedbackDbContext _context;
         private readonly IRepository<Notification> _notificationRepo;
         private readonly IMapper _mapper;
 
-        public NotificationService(IRepository<Notification> notificationRepo, IMapper mapper)
+        public NotificationService(FeedbackDbContext context, IRepository<Notification> notificationRepo, IMapper mapper)
         {
+            _context = context;
             _notificationRepo = notificationRepo;
             _mapper = mapper;
         }
@@ -43,8 +47,8 @@ namespace FeedBackGeneratorApp.Services
             if (paginationParams.PageSize <= 0 || paginationParams.PageSize > 100)
                 throw new BadRequestException("Page size must be between 1 and 100.");
 
-            var allNotifications = await _notificationRepo.FindAsync(n => n.UserId == userId);
-            var query = allNotifications.AsQueryable();
+            var query = _context.Notifications.AsNoTracking()
+                .Where(n => n.UserId == userId);
 
             // Filter by read/unread
             if (!string.IsNullOrWhiteSpace(paginationParams.SearchTerm))
@@ -61,12 +65,12 @@ namespace FeedBackGeneratorApp.Services
             // Sort
             query = query.OrderByDescending(n => n.CreatedAt);
 
-            var totalCount = query.Count();
+            var totalCount = await query.CountAsync();
 
-            var notifications = query
+            var notifications = await query
                 .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
                 .Take(paginationParams.PageSize)
-                .ToList();
+                .ToListAsync();
 
             return new PagedResult<NotificationResponseDto>
             {
@@ -96,8 +100,8 @@ namespace FeedBackGeneratorApp.Services
 
         public async Task<int> GetUnreadCountAsync(int userId)
         {
-            var notifications = await _notificationRepo.FindAsync(n => n.UserId == userId && !n.IsRead);
-            return notifications.Count();
+            return await _context.Notifications.AsNoTracking()
+                .CountAsync(n => n.UserId == userId && !n.IsRead);
         }
     }
 }

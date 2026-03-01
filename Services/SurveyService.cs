@@ -62,6 +62,8 @@ namespace FeedBackGeneratorApp.Services
 
             await _surveyRepo.AddAsync(survey);
 
+            var questionsToAdd = new List<Question>();
+
             // Copy questions from an existing survey if requested
             if (dto.CopyQuestionsFromSurveyId.HasValue)
             {
@@ -77,7 +79,7 @@ namespace FeedBackGeneratorApp.Services
 
                 foreach (var sourceQ in sourceSurvey.Questions.OrderBy(q => q.OrderIndex))
                 {
-                    var clonedQuestion = new Question
+                    questionsToAdd.Add(new Question
                     {
                         SurveyId = survey.Id,
                         Text = sourceQ.Text,
@@ -85,8 +87,7 @@ namespace FeedBackGeneratorApp.Services
                         Options = sourceQ.Options,
                         IsRequired = sourceQ.IsRequired,
                         OrderIndex = sourceQ.OrderIndex
-                    };
-                    await _questionRepo.AddAsync(clonedQuestion);
+                    });
                 }
             }
 
@@ -97,8 +98,14 @@ namespace FeedBackGeneratorApp.Services
                 {
                     var question = _mapper.Map<Question>(qDto);
                     question.SurveyId = survey.Id;
-                    await _questionRepo.AddAsync(question);
+                    questionsToAdd.Add(question);
                 }
+            }
+
+            // Batch insert all questions in a single round-trip
+            if (questionsToAdd.Any())
+            {
+                await _questionRepo.AddRangeAsync(questionsToAdd);
             }
 
             // Auto-generate shareable link

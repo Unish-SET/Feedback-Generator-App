@@ -116,8 +116,7 @@ namespace FeedBackGeneratorApp.Services
 
         public async Task<PagedResult<UserResponseDto>> GetAllUsersAsync(PaginationParams paginationParams)
         {
-            var allUsers = await _userRepo.GetAllAsync();
-            var query = allUsers.AsQueryable();
+            var query = _db.Users.AsNoTracking().AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(paginationParams.SearchTerm))
             {
@@ -136,11 +135,11 @@ namespace FeedBackGeneratorApp.Services
                 _       => query.OrderByDescending(u => u.CreatedAt)
             };
 
-            var totalCount = query.Count();
-            var users = query
+            var totalCount = await query.CountAsync();
+            var users = await query
                 .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
                 .Take(paginationParams.PageSize)
-                .ToList();
+                .ToListAsync();
 
             return new PagedResult<UserResponseDto>
             {

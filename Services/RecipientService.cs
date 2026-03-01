@@ -1,4 +1,6 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using FeedBackGeneratorApp.Contexts;
 using FeedBackGeneratorApp.DTOs;
 using FeedBackGeneratorApp.Exceptions;
 using FeedBackGeneratorApp.Interfaces;
@@ -8,11 +10,13 @@ namespace FeedBackGeneratorApp.Services
 {
     public class RecipientService : IRecipientService
     {
+        private readonly FeedbackDbContext _context;
         private readonly IRepository<Recipient> _recipientRepo;
         private readonly IMapper _mapper;
 
-        public RecipientService(IRepository<Recipient> recipientRepo, IMapper mapper)
+        public RecipientService(FeedbackDbContext context, IRepository<Recipient> recipientRepo, IMapper mapper)
         {
+            _context = context;
             _recipientRepo = recipientRepo;
             _mapper = mapper;
         }
@@ -48,8 +52,8 @@ namespace FeedBackGeneratorApp.Services
             if (paginationParams.PageSize <= 0 || paginationParams.PageSize > 100)
                 throw new BadRequestException("Page size must be between 1 and 100.");
 
-            var allRecipients = await _recipientRepo.FindAsync(r => r.CreatedByUserId == userId);
-            var query = allRecipients.AsQueryable();
+            var query = _context.Recipients.AsNoTracking()
+                .Where(r => r.CreatedByUserId == userId);
 
             // Filter by search term
             if (!string.IsNullOrWhiteSpace(paginationParams.SearchTerm))
@@ -69,12 +73,12 @@ namespace FeedBackGeneratorApp.Services
                 _ => query.OrderByDescending(r => r.CreatedAt)
             };
 
-            var totalCount = query.Count();
+            var totalCount = await query.CountAsync();
 
-            var recipients = query
+            var recipients = await query
                 .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
                 .Take(paginationParams.PageSize)
-                .ToList();
+                .ToListAsync();
 
             return new PagedResult<RecipientResponseDto>
             {
@@ -94,8 +98,8 @@ namespace FeedBackGeneratorApp.Services
             if (paginationParams.PageSize <= 0 || paginationParams.PageSize > 100)
                 throw new BadRequestException("Page size must be between 1 and 100.");
 
-            var allRecipients = await _recipientRepo.FindAsync(r => r.CreatedByUserId == userId && r.GroupName == groupName);
-            var query = allRecipients.AsQueryable();
+            var query = _context.Recipients.AsNoTracking()
+                .Where(r => r.CreatedByUserId == userId && r.GroupName == groupName);
 
             // Filter
             if (!string.IsNullOrWhiteSpace(paginationParams.SearchTerm))
@@ -112,12 +116,12 @@ namespace FeedBackGeneratorApp.Services
                 _ => query.OrderByDescending(r => r.CreatedAt)
             };
 
-            var totalCount = query.Count();
+            var totalCount = await query.CountAsync();
 
-            var recipients = query
+            var recipients = await query
                 .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
                 .Take(paginationParams.PageSize)
-                .ToList();
+                .ToListAsync();
 
             return new PagedResult<RecipientResponseDto>
             {
@@ -162,13 +166,27 @@ namespace FeedBackGeneratorApp.Services
             if (duplicateEmails.Any())
                 throw new BadRequestException($"Duplicate emails found in import: {string.Join(", ", duplicateEmails)}.");
 
-            var results = new List<RecipientResponseDto>();
-            foreach (var dto in dtos)
+            // Check for duplicates against existing recipients in one query
+            var importEmails = dtos.Select(d => d.Email.ToLower()).ToList();
+            var existingEmails = await _context.Recipients.AsNoTracking()
+                .Where(r => r.CreatedByUserId == userId && importEmails.Contains(r.Email.ToLower()))
+                .Select(r => r.Email)
+                .ToListAsync();
+
+            if (existingEmails.Any())
+                throw new ConflictException($"Recipients with these emails already exist: {string.Join(", ", existingEmails)}.");
+
+            // Batch insert all recipients at once
+            var recipients = dtos.Select(dto =>
             {
-                var result = await AddRecipientAsync(dto, userId);
-                results.Add(result);
-            }
-            return results;
+                var recipient = _mapper.Map<Recipient>(dto);
+                recipient.CreatedByUserId = userId;
+                recipient.CreatedAt = DateTime.UtcNow;
+                return recipient;
+            }).ToList();
+
+            await _recipientRepo.AddRangeAsync(recipients);
+            return _mapper.Map<IEnumerable<RecipientResponseDto>>(recipients);
         }
     }
 }
