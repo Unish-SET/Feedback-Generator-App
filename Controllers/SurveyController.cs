@@ -88,7 +88,7 @@ namespace FeedBackGeneratorApp.Controllers
 
         // Admin only can delete questions
         [HttpDelete("questions/{questionId}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<ActionResult> DeleteQuestion(int questionId)
         {
             var deleted = await _surveyService.DeleteQuestionAsync(questionId);
