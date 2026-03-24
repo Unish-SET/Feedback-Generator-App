@@ -1,0 +1,358 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Migrations\\20260324033205_InitialCreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:FeedBackApp\\Migrations\\20260324033205_InitialCreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\controllers\\auditcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\controllers\\auditcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\models\\dtos\\auditlogdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\models\\dtos\\auditlogdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\services\\surveyservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\services\\surveyservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\models\\survey.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\models\\survey.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\controllers\\surveycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\controllers\\surveycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\services\\auditservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\services\\auditservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\models\\dtos\\surveydtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\models\\dtos\\surveydtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\controllers\\responsecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\controllers\\responsecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\repository\\repository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\repository\\repository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\interfaces\\iauditdbcontextfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\interfaces\\iauditdbcontextfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\models\\dtos\\authdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\models\\dtos\\authdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\context\\feedbackdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\context\\feedbackdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\context\\auditdbcontextfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\context\\auditdbcontextfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\models\\question.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\models\\question.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\models\\surveyversion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\models\\surveyversion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{4C3FB9AA-5E24-4AA7-A78C-E258EFD0AA72}|FeedBackApp\\FeedBackApp.csproj|solutionrelative:feedbackapp\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BE773221-C0A6-4327-A70E-3D488E147CBA}|FeedBackApp.Tests\\FeedBackApp.Tests.csproj|c:\\users\\unish.b\\downloads\\feedbackbackend-main (1)\\feedbackbackend-main\\feedback\\feedbackapp.tests\\authservicetests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BE773221-C0A6-4327-A70E-3D488E147CBA}|FeedBackApp.Tests\\FeedBackApp.Tests.csproj|solutionrelative:feedbackapp.tests\\authservicetests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "20260324033205_InitialCreate.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Migrations\\20260324033205_InitialCreate.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Migrations\\20260324033205_InitialCreate.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Migrations\\20260324033205_InitialCreate.cs",
+              "RelativeToolTip": "FeedBackApp\\Migrations\\20260324033205_InitialCreate.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-24T03:32:05.645Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "AuditLogDto.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Models\\DTOs\\AuditLogDto.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Models\\DTOs\\AuditLogDto.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Models\\DTOs\\AuditLogDto.cs",
+              "RelativeToolTip": "FeedBackApp\\Models\\DTOs\\AuditLogDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-23T17:40:34.259Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Program.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Program.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Program.cs",
+              "RelativeToolTip": "FeedBackApp\\Program.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAAB8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-23T17:29:22.304Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "AuditDbContextFactory.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Context\\AuditDbContextFactory.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Context\\AuditDbContextFactory.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Context\\AuditDbContextFactory.cs",
+              "RelativeToolTip": "FeedBackApp\\Context\\AuditDbContextFactory.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAAwBUAAABKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-22T13:49:24.498Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "FeedBackDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Context\\FeedBackDbContext.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Context\\FeedBackDbContext.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Context\\FeedBackDbContext.cs",
+              "RelativeToolTip": "FeedBackApp\\Context\\FeedBackDbContext.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAA+wH4AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-22T13:49:14.428Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Survey.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Models\\Survey.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Models\\Survey.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Models\\Survey.cs",
+              "RelativeToolTip": "FeedBackApp\\Models\\Survey.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAwwCMAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-22T12:34:42.975Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "SurveyService.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Services\\SurveyService.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Services\\SurveyService.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Services\\SurveyService.cs",
+              "RelativeToolTip": "FeedBackApp\\Services\\SurveyService.cs",
+              "ViewState": "AgIAAGkBAAAAAAAAAAAqwAoAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-22T10:38:47.936Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AuditController.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Controllers\\AuditController.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Controllers\\AuditController.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Controllers\\AuditController.cs",
+              "RelativeToolTip": "FeedBackApp\\Controllers\\AuditController.cs",
+              "ViewState": "AgIAADQAAAAAAAAAAAAYwEQAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-23T13:49:32.311Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AuditService.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Services\\AuditService.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Services\\AuditService.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Services\\AuditService.cs",
+              "RelativeToolTip": "FeedBackApp\\Services\\AuditService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFEAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-23T13:50:51.491Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "SurveyController.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Controllers\\SurveyController.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Controllers\\SurveyController.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Controllers\\SurveyController.cs",
+              "RelativeToolTip": "FeedBackApp\\Controllers\\SurveyController.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAA8AAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-23T14:36:57.007Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "IAuditDbContextFactory.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Interfaces\\IAuditDbContextFactory.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Interfaces\\IAuditDbContextFactory.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Interfaces\\IAuditDbContextFactory.cs",
+              "RelativeToolTip": "FeedBackApp\\Interfaces\\IAuditDbContextFactory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-22T18:31:55.873Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ResponseController.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Controllers\\ResponseController.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Controllers\\ResponseController.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Controllers\\ResponseController.cs",
+              "RelativeToolTip": "FeedBackApp\\Controllers\\ResponseController.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABUAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-22T18:34:01.293Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "SurveyDtos.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Models\\DTOs\\SurveyDtos.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Models\\DTOs\\SurveyDtos.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Models\\DTOs\\SurveyDtos.cs",
+              "RelativeToolTip": "FeedBackApp\\Models\\DTOs\\SurveyDtos.cs",
+              "ViewState": "AgIAADIAAAAAAAAAAAAUwD0AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-23T16:29:26.447Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Repository.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Repository\\Repository.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Repository\\Repository.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Repository\\Repository.cs",
+              "RelativeToolTip": "FeedBackApp\\Repository\\Repository.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAQwCAAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-22T18:37:09.387Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "SurveyVersion.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Models\\SurveyVersion.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Models\\SurveyVersion.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Models\\SurveyVersion.cs",
+              "RelativeToolTip": "FeedBackApp\\Models\\SurveyVersion.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAAwA0AAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-22T09:51:22.849Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Models\\User.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Models\\User.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Models\\User.cs",
+              "RelativeToolTip": "FeedBackApp\\Models\\User.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAwwBsAAABCAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-22T06:48:36.686Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "AuthServiceTests.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp.Tests\\AuthServiceTests.cs",
+              "RelativeDocumentMoniker": "FeedBackApp.Tests\\AuthServiceTests.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp.Tests\\AuthServiceTests.cs",
+              "RelativeToolTip": "FeedBackApp.Tests\\AuthServiceTests.cs",
+              "ViewState": "AgIAAIAAAAAAAAAAAAAwwJcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-21T11:30:21.615Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "AuthDtos.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Models\\DTOs\\AuthDtos.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Models\\DTOs\\AuthDtos.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Models\\DTOs\\AuthDtos.cs",
+              "RelativeToolTip": "FeedBackApp\\Models\\DTOs\\AuthDtos.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAAAYwCIAAAA+AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-21T11:26:17.498Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Question.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Models\\Question.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Models\\Question.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Models\\Question.cs",
+              "RelativeToolTip": "FeedBackApp\\Models\\Question.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-22T12:36:52.618Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "AuthService.cs",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Services\\AuthService.cs",
+              "RelativeDocumentMoniker": "FeedBackApp\\Services\\AuthService.cs",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Services\\AuthService.cs",
+              "RelativeToolTip": "FeedBackApp\\Services\\AuthService.cs",
+              "ViewState": "AgIAAEMAAAAAAAAAAAAawEkAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-21T11:28:10.65Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "FeedBackApp\\Properties\\launchSettings.json",
+              "ToolTip": "C:\\Users\\Unish.B\\Downloads\\FeedBackBackend-main (1)\\FeedBackBackend-main\\FeedBack\\FeedBackApp\\Properties\\launchSettings.json",
+              "RelativeToolTip": "FeedBackApp\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-03-21T11:08:07.935Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
