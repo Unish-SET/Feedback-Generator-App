@@ -1,6 +1,5 @@
     <div class="space-y-6 slide-up">
 
-      <!-- Page Header -->
       <div class="sticky top-0 z-10 -mx-4 lg:-mx-6 px-4 lg:px-6 py-3 bg-surface-50/95 backdrop-blur-sm border-b border-surface-100 mb-2">
         <div class="max-w-7xl mx-auto">
           <h1 class="text-xl font-bold text-surface-900 leading-none">Admin Panel</h1>
@@ -8,7 +7,6 @@
         </div>
       </div>
 
-      <!-- Stats -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div class="card p-4">
           <p class="text-xs font-semibold text-surface-400 uppercase tracking-wider mb-1">Total Users</p>
@@ -28,7 +26,6 @@
         </div>
       </div>
 
-      <!-- Tabs -->
       <div class="flex gap-1 border-b border-surface-200">
         <button (click)="activeTab.set('users')"
           class="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors relative"
@@ -53,9 +50,7 @@
         </button>
       </div>
 
-      <!-- ═══ USERS TAB ═══ -->
       @if (activeTab() === 'users') {
-        <!-- Filter bar -->
         <div class="card p-4">
           <div class="flex flex-wrap gap-3">
             <div class="flex-1 min-w-48">
@@ -195,7 +190,6 @@
         }
       }
 
-      <!-- ═══ SURVEYS TAB ═══ -->
       @if (activeTab() === 'surveys') {
         <div class="card p-4">
           <div class="flex flex-wrap gap-3">
@@ -259,14 +253,16 @@
                       <div class="flex items-center gap-1.5 flex-wrap">
                         @if (!s.isDeleted) {
                           @if (s.status !== 'Active') {
-                            <!-- ALIGN-02: renamed setSurveyStatus → setSurveyState -->
                             <button (click)="setSurveyState(s.id, 'Active')" [disabled]="surveyActionId() === s.id"
                               class="btn btn-sm bg-emerald-600 text-white hover:bg-emerald-700">Activate</button>
                           }
-                          @if (s.status !== 'Inactive') {
-                            <!-- ALIGN-02 + fix: 'Draft' was an invalid state value — corrected to 'Inactive' -->
+                          @if (s.status === 'Active') {
                             <button (click)="setSurveyState(s.id, 'Inactive')" [disabled]="surveyActionId() === s.id"
                               class="btn-secondary btn-sm">Pause</button>
+                          }
+                          @if (s.status === 'Closed') {
+                            <button (click)="setSurveyState(s.id, 'Inactive')" [disabled]="surveyActionId() === s.id"
+                              class="btn btn-sm bg-emerald-600 text-white hover:bg-emerald-700">Reopen</button>
                           }
                           @if (s.status !== 'Closed') {
                             <button (click)="setSurveyState(s.id, 'Closed')" [disabled]="surveyActionId() === s.id"
@@ -279,7 +275,12 @@
                             </svg>
                           </button>
                         } @else {
-                          <span class="text-xs text-red-400 italic px-2">Deleted</span>
+                          <button (click)="restoreSurvey(s.id, $event)" [disabled]="surveyActionId() === s.id"
+                            class="btn btn-sm bg-emerald-600 text-white hover:bg-emerald-700">
+                            @if (surveyActionId() === s.id) {
+                              <span class="inline-block w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                            } @else { Restore }
+                          </button>
                         }
                       </div>
                     </td>
@@ -299,7 +300,6 @@
         }
       }
 
-      <!-- ═══ AUDIT LOGS TAB ═══ -->
       @if (activeTab() === 'audit') {
         <div class="card p-4">
           <div class="flex flex-wrap gap-3">

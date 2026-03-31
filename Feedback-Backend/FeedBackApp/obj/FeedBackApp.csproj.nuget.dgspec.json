@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\UNISH.B\\OneDrive\\Desktop\\FbApp\\FeedBackApp\\FeedBackApp.csproj": {}
+    "C:\\Users\\UNISH.B\\Downloads\\FbApp\\Feedback-Backend\\FeedBackApp\\FeedBackApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\UNISH.B\\OneDrive\\Desktop\\FbApp\\FeedBackApp\\FeedBackApp.csproj": {
+    "C:\\Users\\UNISH.B\\Downloads\\FbApp\\Feedback-Backend\\FeedBackApp\\FeedBackApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\UNISH.B\\OneDrive\\Desktop\\FbApp\\FeedBackApp\\FeedBackApp.csproj",
+        "projectUniqueName": "C:\\Users\\UNISH.B\\Downloads\\FbApp\\Feedback-Backend\\FeedBackApp\\FeedBackApp.csproj",
         "projectName": "FeedBackApp",
-        "projectPath": "C:\\Users\\UNISH.B\\OneDrive\\Desktop\\FbApp\\FeedBackApp\\FeedBackApp.csproj",
+        "projectPath": "C:\\Users\\UNISH.B\\Downloads\\FbApp\\Feedback-Backend\\FeedBackApp\\FeedBackApp.csproj",
         "packagesPath": "C:\\Users\\UNISH.B\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\UNISH.B\\OneDrive\\Desktop\\FbApp\\FeedBackApp\\obj\\",
+        "outputPath": "C:\\Users\\UNISH.B\\Downloads\\FbApp\\Feedback-Backend\\FeedBackApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -54,7 +54,7 @@
 
           <!-- Current Question -->
           <form [formGroup]="responseForm" (ngSubmit)="submit()">
-            @let q = survey()!.questions[currentQuestion()];
+            @for (q of [survey()!.questions[currentQuestion()]]; track q.id) {
             <div class="card fade-in overflow-hidden">
               <!-- Question body -->
               <div class="p-8">
@@ -127,6 +127,7 @@
                 }
               </div>
             </div>
+            }
           </form>
         </div>
       }

@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SurveyService } from '../../core/services/survey.service';
 import { ResponseService } from '../../core/services/response.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -17,6 +17,7 @@ import { PublicSurvey, PublicQuestion, SubmitResponseRequest } from '../../share
 })
 export class PublicSurveyComponent implements OnInit {
   private readonly route           = inject(ActivatedRoute);
+  private readonly router          = inject(Router);
   private readonly surveyService   = inject(SurveyService);
   private readonly responseService = inject(ResponseService);
   private readonly authService     = inject(AuthService);
@@ -65,6 +66,12 @@ export class PublicSurveyComponent implements OnInit {
           this.loading.set(false);
           return;
         }
+        if (!s.allowAnonymous && !this.authService.isAuthenticated()) {
+          this.router.navigate(['/auth/login'], {
+            queryParams: { returnUrl: this.router.url }
+          });
+          return;
+        }
         this.survey.set(s);
         this.buildForm(s);
         this.loading.set(false);
@@ -84,7 +91,6 @@ export class PublicSurveyComponent implements OnInit {
     });
   }
 
-  // ── Form helpers ─────────────────────────────────────────────────────────
   private buildForm(s: PublicSurvey): void {
     s.questions.forEach(q => {
       if (q.type !== 'MultipleChoice' && q.type !== 'RatingScale') {

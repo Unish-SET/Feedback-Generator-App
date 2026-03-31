@@ -2,11 +2,7 @@ using System.Diagnostics;
 
 namespace FeedBackApp.Exceptions.Middleware
 {
-    /// <summary>
-    /// Logs every HTTP request and response (method, path, status, duration).
-    /// Generates or propagates X-Correlation-ID for distributed tracing.
-    /// Must be registered BEFORE GlobalExceptionMiddleware.
-    /// </summary>
+    
     public class RequestLoggingMiddleware
     {
         private readonly RequestDelegate                   _next;
@@ -24,7 +20,7 @@ namespace FeedBackApp.Exceptions.Middleware
 
         public async Task InvokeAsync(HttpContext context)
         {
-            // ── Correlation ID ────────────────────────────────────────────────
+            
             var correlationId =
                 context.Request.Headers["X-Correlation-ID"].FirstOrDefault()
                 ?? Guid.NewGuid().ToString("N");
@@ -38,7 +34,7 @@ namespace FeedBackApp.Exceptions.Middleware
                 return;
             }
 
-            // ── Log request ───────────────────────────────────────────────────
+            
             var sw = Stopwatch.StartNew();
             var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
