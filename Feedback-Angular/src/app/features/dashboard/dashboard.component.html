@@ -1,0 +1,275 @@
+
+    <div class="space-y-6 slide-up">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-xl font-bold text-surface-900 leading-none">Dashboard</h1>
+          <p class="text-surface-400 text-xs mt-1">
+            Good {{ greeting() }}, <span class="font-medium text-surface-600">{{ auth.user()?.username }}</span>
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <a routerLink="/question-bank" class="btn-secondary btn-sm hidden sm:inline-flex">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+            </svg>
+            Question Bank
+          </a>
+          <a routerLink="/surveys/new" class="btn-primary btn-sm">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+            New Survey
+          </a>
+        </div>
+      </div>
+
+      <!-- Stat Cards — 5 cards: Total | Active | Inactive | Closed | Submissions -->
+      <!-- displayValues[0]=total, [1]=active, [2]=inactive, [3]=closed, [4]=totalResponses -->
+      <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+
+        <!-- Total Surveys -->
+        <a routerLink="/surveys" class="card p-4 stat-card block" style="border-left:4px solid #6366f1">
+          @if (loading()) {
+            <div class="skeleton h-3 w-16 mb-2 rounded"></div>
+            <div class="skeleton h-7 w-10 rounded"></div>
+          } @else {
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-xs font-semibold text-surface-400 uppercase tracking-widest mb-1">Total</p>
+                <p class="text-2xl font-bold text-surface-900">{{ displayValues()[0] }}</p>
+                <p class="text-xs text-surface-400 mt-0.5">All surveys</p>
+              </div>
+              <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#eef2ff">
+                <svg class="w-4 h-4" style="color:#6366f1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+              </div>
+            </div>
+          }
+        </a>
+
+        <!-- Active -->
+        <a routerLink="/surveys" [queryParams]="{status:'Active'}" class="card p-4 stat-card block" style="border-left:4px solid #22c55e">
+          @if (loading()) {
+            <div class="skeleton h-3 w-16 mb-2 rounded"></div>
+            <div class="skeleton h-7 w-10 rounded"></div>
+          } @else {
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-xs font-semibold text-surface-400 uppercase tracking-widest mb-1">Active</p>
+                <p class="text-2xl font-bold text-surface-900">{{ displayValues()[1] }}</p>
+                <p class="text-xs font-medium mt-0.5" style="color:#16a34a">Live now</p>
+              </div>
+              <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#f0fdf4">
+                <svg class="w-4 h-4" style="color:#22c55e" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+            </div>
+          }
+        </a>
+
+        <!-- Inactive (Drafts / Paused) — links to ?status=Inactive -->
+        <a routerLink="/surveys" [queryParams]="{status:'Inactive'}" class="card p-4 stat-card block" style="border-left:4px solid #94a3b8">
+          @if (loading()) {
+            <div class="skeleton h-3 w-16 mb-2 rounded"></div>
+            <div class="skeleton h-7 w-10 rounded"></div>
+          } @else {
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-xs font-semibold text-surface-400 uppercase tracking-widest mb-1">Inactive</p>
+                <p class="text-2xl font-bold text-surface-900">{{ displayValues()[2] }}</p>
+                <p class="text-xs text-surface-400 mt-0.5">Draft / Paused</p>
+              </div>
+              <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 bg-surface-100">
+                <svg class="w-4 h-4 text-surface-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+            </div>
+          }
+        </a>
+
+        <!-- Closed -->
+        <a routerLink="/surveys" [queryParams]="{status:'Closed'}" class="card p-4 stat-card block" style="border-left:4px solid #ef4444">
+          @if (loading()) {
+            <div class="skeleton h-3 w-16 mb-2 rounded"></div>
+            <div class="skeleton h-7 w-10 rounded"></div>
+          } @else {
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-xs font-semibold text-surface-400 uppercase tracking-widest mb-1">Closed</p>
+                <p class="text-2xl font-bold text-surface-900">{{ displayValues()[3] }}</p>
+                <p class="text-xs font-medium mt-0.5" style="color:#dc2626">Ended</p>
+              </div>
+              <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#fef2f2">
+                <svg class="w-4 h-4" style="color:#ef4444" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+            </div>
+          }
+        </a>
+
+        <!-- Total Responses -->
+        <div class="card p-4 stat-card" style="border-left:4px solid #8b5cf6">
+          @if (loading()) {
+            <div class="skeleton h-3 w-16 mb-2 rounded"></div>
+            <div class="skeleton h-7 w-10 rounded"></div>
+          } @else {
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-xs font-semibold text-surface-400 uppercase tracking-widest mb-1">Submissions</p>
+                <p class="text-2xl font-bold text-surface-900">{{ displayValues()[4] }}</p>
+                <p class="text-xs text-surface-400 mt-0.5">Across all</p>
+              </div>
+              <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#f5f3ff">
+                <svg class="w-4 h-4" style="color:#8b5cf6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                </svg>
+              </div>
+            </div>
+          }
+        </div>
+
+      </div>
+
+      <!-- Chart + Recent Surveys -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+        <!-- Response Activity Chart -->
+        <div class="lg:col-span-2 card p-6">
+          <div class="flex items-center justify-between mb-5">
+            <div>
+              <h2 class="text-sm font-semibold text-surface-800">Response Activity</h2>
+              <p class="text-xs text-surface-400 mt-0.5">
+                @if (hasChartData()) { Daily submissions · {{ chartSurveyTitle() }} }
+                @else { Submissions over time }
+              </p>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full" style="background:#6366f1"></span>
+              <span class="text-xs text-surface-400">Responses</span>
+            </div>
+          </div>
+
+          @if (loading()) {
+            <div class="skeleton h-56 rounded-xl"></div>
+          } @else if (!hasChartData()) {
+            <div class="flex flex-col items-center justify-center h-56 gap-3 rounded-xl border-2 border-dashed border-surface-200">
+              <svg class="w-12 h-12 text-surface-200" viewBox="0 0 48 48" fill="none">
+                <path d="M8 36l8-10 8 6 8-14 8 8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="8" cy="36" r="2" fill="currentColor"/>
+                <circle cx="16" cy="26" r="2" fill="currentColor"/>
+                <circle cx="24" cy="32" r="2" fill="currentColor"/>
+                <circle cx="32" cy="18" r="2" fill="currentColor"/>
+                <circle cx="40" cy="26" r="2" fill="currentColor"/>
+              </svg>
+              <p class="text-sm text-surface-400">Publish a survey to start seeing activity</p>
+              <a routerLink="/surveys" class="btn-secondary btn-sm">Go to Surveys &rarr;</a>
+            </div>
+          } @else {
+            <div class="chart-container">
+              <canvas #lineChart></canvas>
+            </div>
+          }
+        </div>
+
+        <!-- Recent Surveys -->
+        <div class="card flex flex-col" style="min-height:320px">
+          <div class="flex items-center justify-between px-5 pt-5 pb-3"
+            style="border-bottom:1px solid #f1f5f9">
+            <div>
+              <h2 class="text-sm font-semibold text-surface-800">Recent Surveys</h2>
+              <p class="text-xs text-surface-400 mt-0.5">Latest activity</p>
+            </div>
+            <a routerLink="/surveys" class="text-xs font-medium" style="color:#6366f1">View all &rarr;</a>
+          </div>
+
+          @if (loading()) {
+            <div class="p-4 space-y-2 flex-1">
+              @for (i of [1,2,3,4]; track i) {
+                <div class="skeleton h-14 rounded-xl"></div>
+              }
+            </div>
+          } @else if (recentSurveys().length === 0) {
+            <div class="flex-1 flex flex-col items-center justify-center py-10 gap-3 px-5">
+              <svg class="w-12 h-12 text-surface-200" viewBox="0 0 48 48" fill="none">
+                <rect x="6" y="6" width="36" height="36" rx="4" stroke="currentColor" stroke-width="2.5"/>
+                <path d="M14 18h20M14 24h14M14 30h10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+              <p class="text-sm font-semibold text-surface-500">No surveys yet</p>
+              <p class="text-xs text-surface-400 text-center">Create your first survey to get started</p>
+              <a routerLink="/surveys/new" class="btn-primary btn-sm">Create Survey</a>
+            </div>
+          } @else {
+            <div class="flex-1 overflow-y-auto">
+              @for (s of recentSurveys(); track s.id) {
+                <a [routerLink]="surveyRoute(s)"
+                  class="flex items-center gap-3 px-4 py-3 hover:bg-surface-50 transition-colors group"
+                  style="border-bottom:1px solid #f8fafc; text-decoration:none">
+
+                  <!-- State dot -->
+                  <div class="w-2 h-2 rounded-full flex-shrink-0 mt-0.5"
+                    [style.background]="statusColor(s)"></div>
+
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-surface-800 truncate group-hover:text-brand-700 transition-colors">
+                      {{ s.title }}
+                    </p>
+                    <div class="flex items-center gap-2 mt-0.5">
+                      <span class="text-xs font-medium" [style.color]="statusColor(s)">
+                        {{ statusLabel(s) }}
+                      </span>
+                      @if (s.responseCount > 0) {
+                        <span class="text-xs text-surface-300">·</span>
+                        <span class="text-xs text-surface-400">{{ s.responseCount }} responses</span>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- Destination hint — contextual per state -->
+                  <span class="text-xs text-surface-300 group-hover:text-brand-400 transition-colors flex-shrink-0">
+                    @if (s.state === 'Inactive') { Builder }
+                    @else if (s.state === 'Closed') { Results }
+                    @else { Analytics }
+                    &rarr;
+                  </span>
+                </a>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Top Performing Survey widget -->
+      @if (!loading() && topSurvey() && topSurvey()!.responseCount > 0) {
+        <div class="card p-5" style="background:linear-gradient(135deg,#16213e 0%,#1a2f5a 100%); border:none">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-widest mb-1" style="color:#818cf8">Top Performing Survey</p>
+              <p class="text-base font-bold truncate max-w-xs" style="color:#f1f5f9">{{ topSurvey()!.title }}</p>
+              <div class="flex items-center gap-3 mt-2">
+                <span class="text-sm font-semibold" style="color:#818cf8">{{ topSurvey()!.responseCount }}</span>
+                <span class="text-xs" style="color:#64748b">responses</span>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <a [routerLink]="['/surveys', topSurvey()!.id, 'responses']"
+                class="btn-sm rounded-lg font-medium text-xs"
+                style="background:rgba(255,255,255,0.1); color:#f1f5f9; padding:6px 12px">
+                Responses
+              </a>
+              <a [routerLink]="['/surveys', topSurvey()!.id, 'analytics']"
+                class="btn-sm rounded-lg font-medium text-xs"
+                style="background:#818cf8; color:#ffffff; padding:6px 12px">
+                Analytics &rarr;
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+
+    </div>

@@ -1,0 +1,239 @@
+
+    <div class="space-y-6 slide-up">
+
+      <!-- ── Header ──────────────────────────────────── -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-bold text-surface-900">Question Bank</h1>
+          <p class="text-sm text-surface-500 mt-1">Reusable question templates you can clone into any survey</p>
+        </div>
+        <div class="flex gap-2">
+          <button (click)="showImportModal.set(true)" class="btn-secondary btn-sm">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+            Import
+          </button>
+          <button (click)="downloadTemplate()" class="btn-secondary btn-sm">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+            Template
+          </button>
+          <button (click)="openAddModal()" class="btn-primary btn-sm">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            New Question
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Filters ─────────────────────────────────── -->
+      <div class="card p-4">
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+          <div class="sm:col-span-2">
+            <input
+              id="qb-search"
+              name="qb-search"
+              type="text"
+              class="input text-sm w-full"
+              placeholder="Search questions..."
+              [value]="searchTerm"
+              (input)="onSearch($event)"
+              aria-label="Search questions"
+            />
+          </div>
+          <select id="qb-type-filter" name="qb-type-filter" class="input text-sm" [value]="typeFilter" (change)="onTypeChange($event)" aria-label="Filter by question type">
+            <option value="">All Types</option>
+            @for (t of questionTypes; track t.value) {
+              <option [value]="t.value">{{ t.icon }} {{ t.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <!-- ── Loading ─────────────────────────────────── -->
+      @if (loading()) {
+        <div class="space-y-3">
+          @for (i of [1,2,3,4]; track i) {
+            <div class="skeleton h-24 rounded-2xl"></div>
+          }
+        </div>
+      } @else if (questions().length === 0 && !filtering()) {
+        <div class="card"><app-empty-state type="questions" /></div>
+      } @else {
+
+        <!-- ── Question Cards ────────────────────────── -->
+        <div class="space-y-3"
+          [style.opacity]="filtering() ? '0.6' : '1'"
+          style="transition:opacity 0.15s">
+          @for (q of questions(); track q.id) {
+            <div class="card p-5 group hover:shadow-md transition-shadow">
+              <div class="flex items-start gap-4">
+                <!-- Icon -->
+                <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-lg flex-shrink-0">
+                  {{ getTypeIcon(q.type) }}
+                </div>
+
+                <!-- Content -->
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-1 flex-wrap">
+                    <span class="badge badge-draft text-xs">{{ q.type }}</span>
+                    @if (q.tag) {
+                      <span class="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-600 ring-1 ring-purple-200">{{ q.tag }}</span>
+                    }
+                    @if (q.isRequired) {
+                      <span class="text-red-400 text-xs font-medium">Required</span>
+                    }
+                  </div>
+                  <p class="text-sm font-medium text-surface-900">{{ q.text }}</p>
+                  @if (q.options && q.options.length > 0) {
+                    <div class="mt-2 flex flex-wrap gap-1.5">
+                      @for (opt of q.options; track opt.id) {
+                        <span class="text-xs px-2 py-0.5 rounded-lg bg-surface-100 text-surface-600">{{ opt.text }}</span>
+                      }
+                    </div>
+                  }
+                  <p class="text-xs text-surface-400 mt-2">Added {{ q.createdAt | date:'mediumDate' }}</p>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                  <button (click)="openEditModal(q)" class="btn-ghost btn-icon btn-sm text-brand-600" title="Edit" aria-label="Edit question">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+                  </button>
+                  <button (click)="deleteQuestion(q)" class="btn-ghost btn-icon btn-sm text-red-500" title="Delete" aria-label="Delete question">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- ── Pagination ────────────────────────────── -->
+        @if (totalPages() > 1) {
+          <div class="flex items-center justify-center gap-2 pt-4">
+            <button (click)="changePage(currentPage() - 1)" [disabled]="currentPage() <= 1" class="btn-secondary btn-sm">&larr; Prev</button>
+            <span class="text-sm text-surface-500">Page {{ currentPage() }} of {{ totalPages() }}</span>
+            <button (click)="changePage(currentPage() + 1)" [disabled]="currentPage() >= totalPages()" class="btn-secondary btn-sm">Next &rarr;</button>
+          </div>
+        }
+      }
+
+      <!-- ── Add / Edit Modal ────────────────────────── -->
+      @if (showFormModal()) {
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 fade-in">
+          <div class="card p-6 w-full max-w-lg shadow-modal slide-up max-h-[85vh] overflow-y-auto scrollbar-thin">
+            <div class="flex items-center justify-between mb-5">
+              <h3 class="font-semibold text-surface-900">{{ editingId() ? 'Edit' : 'New' }} Bank Question</h3>
+              <button (click)="showFormModal.set(false)" class="btn-ghost btn-icon text-surface-400 text-xl">×</button>
+            </div>
+
+            <form [formGroup]="formGroup" (ngSubmit)="saveQuestion()" class="space-y-4">
+              <div>
+                <label for="qb-text" class="label text-xs">Question Text</label>
+                <textarea id="qb-text" name="qb-text" formControlName="text" rows="2" class="input text-sm w-full" placeholder="Enter question..."></textarea>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label for="qb-type" class="label text-xs">Type</label>
+                  <select id="qb-type" name="qb-type" formControlName="type" class="input text-sm" (change)="onTypeFormChange()">
+                    @for (t of questionTypes; track t.value) {
+                      <option [value]="t.value">{{ t.icon }} {{ t.label }}</option>
+                    }
+                  </select>
+                </div>
+                <div>
+                  <label for="qb-tag" class="label text-xs">Tag (optional)</label>
+                  <input id="qb-tag" name="qb-tag" type="text" formControlName="tag" class="input text-sm" placeholder="e.g. Onboarding" />
+                </div>
+              </div>
+
+              <label class="flex items-center gap-2 text-sm cursor-pointer">
+                <input id="qb-required" name="qb-required" type="checkbox" formControlName="isRequired" class="rounded text-brand-600" />
+                Required
+              </label>
+
+              @if (isChoiceType(formGroup.get('type')?.value)) {
+                <div>
+                  <label class="label text-xs">Options</label>
+                  <div formArrayName="options" class="space-y-2">
+                    @for (opt of optionsArray.controls; track $index; let oi = $index) {
+                      <div class="flex gap-2" [formGroupName]="oi">
+                        <input [id]="'qb-option-' + oi" [name]="'qb-option-' + oi" type="text" formControlName="text" class="input text-sm flex-1" [placeholder]="'Option ' + (oi + 1)" [attr.aria-label]="'Option ' + (oi + 1)" />
+                        @if (optionsArray.length > 2) {
+                          <button type="button" (click)="removeOption(oi)" class="btn-ghost btn-icon btn-sm text-red-400">×</button>
+                        }
+                      </div>
+                    }
+                  </div>
+                  <button type="button" (click)="addOption()" class="btn-secondary btn-sm mt-2">+ Add Option</button>
+                </div>
+              }
+
+              <div class="flex gap-2 pt-2">
+                <button type="submit" [disabled]="formGroup.invalid || saving()" class="btn-primary btn-sm">
+                  @if (saving()) { <span class="inline-block w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> }
+                  {{ editingId() ? 'Update' : 'Create' }}
+                </button>
+                <button type="button" (click)="showFormModal.set(false)" class="btn-secondary btn-sm">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      }
+
+      <!-- ── Excel Import Modal ──────────────────────── -->
+      @if (showImportModal()) {
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 fade-in">
+          <div class="card p-6 w-full max-w-md shadow-modal slide-up">
+            <div class="flex items-center justify-between mb-5">
+              <h3 class="font-semibold text-surface-900">Import from Excel</h3>
+              <button (click)="showImportModal.set(false)" class="btn-ghost btn-icon text-surface-400 text-xl">×</button>
+            </div>
+
+            <div class="space-y-4">
+              <div
+                class="border-2 border-dashed border-surface-200 rounded-2xl p-8 text-center hover:border-brand-300 transition-colors cursor-pointer"
+                (click)="fileInput.click()"
+                (dragover)="$event.preventDefault()"
+                (drop)="onFileDrop($event)"
+              >
+                <div class="text-3xl mb-2">📄</div>
+                <p class="text-sm text-surface-600 font-medium">Drop your .xlsx file here</p>
+                <p class="text-xs text-surface-400 mt-1">or click to browse</p>
+                @if (importFile()) {
+                  <p class="text-xs text-brand-600 mt-2 font-medium">{{ importFile()!.name }}</p>
+                }
+              </div>
+              <input #fileInput id="qb-file-input" name="qb-file-input" type="file" accept=".xlsx,.xls" class="hidden" (change)="onFileSelect($event)" aria-label="Upload Excel file" />
+
+              <label for="qb-add-to-bank" class="flex items-center gap-2 text-sm cursor-pointer">
+                <input id="qb-add-to-bank" name="qb-add-to-bank" type="checkbox" [(ngModel)]="addToBankOnImport" class="rounded text-brand-600" />
+                Also add to question bank
+              </label>
+
+              <div class="flex gap-2">
+                <button
+                  (click)="importExcel()"
+                  [disabled]="!importFile() || importing()"
+                  class="btn-primary btn-sm"
+                >
+                  @if (importing()) { <span class="inline-block w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> }
+                  Import
+                </button>
+                <button (click)="showImportModal.set(false)" class="btn-secondary btn-sm">Cancel</button>
+              </div>
+
+              @if (importResult()) {
+                <div class="p-3 rounded-xl text-xs space-y-1"
+                  [class]="importResult()!.failed > 0 ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700'">
+                  <p>✅ {{ importResult()!.success }} imported{{ importResult()!.failed > 0 ? ', ⚠️ ' + importResult()!.failed + ' failed' : '' }}</p>
+                  @for (err of importResult()!.errors; track $index) {
+                    <p class="text-red-500">{{ err }}</p>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  

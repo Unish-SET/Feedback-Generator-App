@@ -1,0 +1,128 @@
+
+    <div class="space-y-6 slide-up">
+      <!-- Sticky Page Header -->
+      <div class="sticky top-0 z-10 -mx-4 lg:-mx-6 px-4 lg:px-6 py-3 bg-surface-50/95 backdrop-blur-sm border-b border-surface-100 mb-2">
+        <div class="flex items-center justify-between gap-3 flex-wrap max-w-7xl mx-auto">
+          <div>
+            <div class="flex items-center gap-1.5 text-xs text-surface-400 mb-0.5">
+              <a routerLink="/surveys" class="hover:text-brand-600 transition-colors">Surveys</a>
+              <span>›</span>
+              <span class="text-surface-600 font-medium truncate max-w-[160px]">{{ survey()?.title || '…' }}</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <h1 class="text-xl font-bold text-surface-900 leading-none">Responses</h1>
+              @if (!loading() && totalCount() > 0) {
+                <span class="badge badge-draft text-xs">{{ totalCount() }} total</span>
+              }
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button (click)="exportExcel()" [disabled]="exporting()" class="btn-secondary btn-sm">📊 Excel</button>
+            <a [routerLink]="['/surveys', id(), 'analytics']" class="btn-ghost btn-sm">📈 Analytics</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div [formGroup]="filterForm" class="card p-4">
+        <div class="flex flex-wrap gap-3 items-center">
+          <span class="text-xs text-surface-400 font-medium">Date range:</span>
+          <input id="resp-date-from" name="resp-date-from" type="date" formControlName="dateFrom" class="input text-sm w-40" aria-label="Submitted from" />
+          <span class="text-xs text-surface-400">to</span>
+          <input id="resp-date-to" name="resp-date-to" type="date" formControlName="dateTo" class="input text-sm w-40" aria-label="Submitted to" />
+          @if (formSnap().dateFrom || formSnap().dateTo) {
+            <button (click)="clearFilters()" class="btn-ghost btn-sm text-surface-400">Clear</button>
+          }
+        </div>
+      </div>
+
+      @if (loading() && initialLoad()) {
+        <div class="card">
+          <table class="w-full">
+            <thead><tr><th>Respondent</th><th>Submitted</th><th>Answers</th></tr></thead>
+            <tbody>
+              @for (i of [1,2,3,4,5]; track i) {
+                <tr>
+                  <td><div class="skeleton h-4 w-32 rounded"></div></td>
+                  <td><div class="skeleton h-4 w-24 rounded"></div></td>
+                  <td><div class="skeleton h-4 w-16 rounded"></div></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else if (responses().length === 0 && !loading()) {
+        <div class="card">
+          <app-empty-state type="responses" />
+        </div>
+      } @else {
+        <div class="table-wrapper"
+          [style.opacity]="loading() ? '0.6' : '1'"
+          [style.pointer-events]="loading() ? 'none' : 'auto'"
+          style="transition:opacity 0.15s">
+          <table class="w-full">
+            <thead>
+              <tr>
+                <th>Respondent</th>
+                <th>Submitted At ↓</th>
+                <th>Answers</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of responses(); track r.id) {
+                <tr class="cursor-pointer" (click)="toggleExpand(r.id)">
+                  <td class="font-medium text-surface-900">{{ r.username || 'Anonymous' }}</td>
+                  <td>{{ r.submittedAt | date:'MMM d, yyyy h:mm a' }}</td>
+                  <td>{{ r.answers.length }}</td>
+                  <td class="text-right text-surface-400 text-sm">{{ expandedId() === r.id ? '▲' : '▼' }}</td>
+                </tr>
+                @if (expandedId() === r.id) {
+                  <tr>
+                    <td colspan="4" class="bg-surface-50 px-4 py-4">
+                      <div class="space-y-3">
+                        @for (ans of r.answers; track ans.questionId) {
+                          <div class="text-sm">
+                            <p class="font-medium text-surface-600 mb-1">{{ ans.questionText }}</p>
+                            @if (ans.textValue) {
+                              <p class="text-surface-800">{{ ans.textValue }}</p>
+                            }
+                            @if (ans.selectedOptionText) {
+                              <span class="badge badge-draft">{{ ans.selectedOptionText }}</span>
+                            }
+                            @if (ans.selectedOptionIds && ans.selectedOptionIds.length > 0) {
+                              <div class="flex flex-wrap gap-1">
+                                @for (optId of ans.selectedOptionIds; track optId) {
+                                  <span class="badge badge-draft text-xs">{{ getOptionText(r, ans.questionId, optId) }}</span>
+                                }
+                              </div>
+                            }
+                            @if (ans.ratingValue) {
+                              <div class="flex items-center gap-1">
+                                @for (s of [1,2,3,4,5]; track s) {
+                                  <span [class]="s <= ans.ratingValue! ? 'text-amber-400' : 'text-surface-200'">★</span>
+                                }
+                                <span class="text-surface-500 text-xs ml-1">{{ ans.ratingValue }}/5</span>
+                              </div>
+                            }
+                          </div>
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if (totalPages() > 1) {
+          <div class="flex items-center justify-center gap-2">
+            <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1" class="btn-secondary btn-sm">&larr; Prev</button>
+            <span class="text-sm text-surface-600">Page {{ currentPage }} of {{ totalPages() }}</span>
+            <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages()" class="btn-secondary btn-sm">Next &rarr;</button>
+          </div>
+        }
+      }
+    </div>
+  

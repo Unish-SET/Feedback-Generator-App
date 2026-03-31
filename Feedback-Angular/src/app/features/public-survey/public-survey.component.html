@@ -1,0 +1,134 @@
+
+    <div class="min-h-screen bg-gradient-to-br from-brand-950 via-surface-900 to-surface-800 py-10 px-4">
+      @if (loading()) {
+        <div class="max-w-2xl mx-auto text-center py-20 text-white">
+          <div class="inline-block w-8 h-8 border-4 border-white/20 border-t-white rounded-full animate-spin mb-4"></div>
+          <p>Loading survey…</p>
+        </div>
+      } @else if (error()) {
+        <div class="max-w-md mx-auto text-center py-20">
+          <div class="card p-8">
+            <div class="text-4xl mb-4">⚠️</div>
+            <h2 class="text-lg font-semibold text-surface-900 mb-2">Survey Unavailable</h2>
+            <p class="text-surface-500 text-sm">{{ errorMessage() }}</p>
+          </div>
+        </div>
+      } @else if (alreadySubmitted()) {
+        <div class="max-w-md mx-auto text-center py-20">
+          <div class="card p-10 slide-up">
+            <div class="text-5xl mb-4">🔒</div>
+            <h2 class="text-xl font-semibold text-surface-900 mb-2">Already Submitted</h2>
+            <p class="text-surface-500 text-sm">You have already submitted a response for this survey.</p>
+          </div>
+        </div>
+      } @else if (submitted()) {
+        <div class="max-w-md mx-auto text-center py-20">
+          <div class="card p-10 slide-up">
+            <div class="text-5xl mb-4">✅</div>
+            <h2 class="text-xl font-semibold text-surface-900 mb-2">Thanks for your response!</h2>
+            <p class="text-surface-500 text-sm">Your feedback has been recorded.</p>
+          </div>
+        </div>
+      } @else if (survey()) {
+        <div class="max-w-2xl mx-auto space-y-6 slide-up">
+          <!-- Survey Header -->
+          <div class="card p-8">
+            <h1 class="text-2xl font-semibold text-surface-900">{{ survey()!.title }}</h1>
+            @if (survey()!.description) {
+              <p class="text-surface-500 mt-2">{{ survey()!.description }}</p>
+            }
+            <!-- Progress bar -->
+            <div class="mt-5">
+              <div class="flex justify-between text-xs text-surface-400 mb-1.5">
+                <span>Progress</span>
+                <span>{{ currentQuestion() + 1 }} / {{ survey()!.questions.length }}</span>
+              </div>
+              <div class="h-1.5 bg-surface-100 rounded-full overflow-hidden">
+                <div
+                  class="h-full bg-brand-500 rounded-full transition-all duration-500"
+                  [style.width.%]="progressPercent()"
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Current Question -->
+          <form [formGroup]="responseForm" (ngSubmit)="submit()">
+            @let q = survey()!.questions[currentQuestion()];
+            <div class="card fade-in overflow-hidden">
+              <!-- Question body -->
+              <div class="p-8">
+                <div class="flex items-center gap-2 mb-4">
+                  <span class="text-xs font-bold text-surface-400 bg-surface-100 px-2 py-0.5 rounded-lg">Q{{ currentQuestion() + 1 }}</span>
+                  @if (q.isRequired) {
+                    <span class="text-red-400 text-xs">Required</span>
+                  }
+                </div>
+                <p class="text-base font-semibold text-surface-900 mb-5">{{ q.text }}</p>
+
+                @if (q.type === 'ShortText') {
+                  <input [id]="'q_' + q.id" [name]="'q_' + q.id" type="text" class="input" [formControlName]="'q_' + q.id" placeholder="Your answer..." [attr.aria-label]="q.text" (input)="clearError()" />
+                }
+                @if (q.type === 'LongText') {
+                  <textarea [id]="'q_' + q.id" [name]="'q_' + q.id" class="input resize-none" rows="4" [formControlName]="'q_' + q.id" placeholder="Your answer..." [attr.aria-label]="q.text" (input)="clearError()"></textarea>
+                }
+                @if (q.type === 'SingleChoice') {
+                  <div class="space-y-2">
+                    @for (opt of q.options; track opt.id) {
+                      <label [for]="'q_' + q.id + '_opt_' + opt.id" class="flex items-center gap-3 p-3 rounded-xl border border-surface-200 hover:border-brand-300 hover:bg-brand-50 cursor-pointer transition-all">
+                        <input [id]="'q_' + q.id + '_opt_' + opt.id" [name]="'q_' + q.id" type="radio" [formControlName]="'q_' + q.id" [value]="opt.id" class="text-brand-600" (change)="clearError()" />
+                        <span class="text-sm text-surface-700">{{ opt.text }}</span>
+                      </label>
+                    }
+                  </div>
+                }
+                @if (q.type === 'MultipleChoice') {
+                  <div class="space-y-2">
+                    @for (opt of q.options; track opt.id) {
+                      <label [for]="'q_' + q.id + '_chk_' + opt.id" class="flex items-center gap-3 p-3 rounded-xl border border-surface-200 hover:border-brand-300 hover:bg-brand-50 cursor-pointer transition-all">
+                        <input [id]="'q_' + q.id + '_chk_' + opt.id" [name]="'q_' + q.id + '_chk_' + opt.id" type="checkbox" [checked]="isChecked(q.id, opt.id)" (change)="toggleCheckbox(q.id, opt.id)" class="rounded text-brand-600" />
+                        <span class="text-sm text-surface-700">{{ opt.text }}</span>
+                      </label>
+                    }
+                  </div>
+                }
+                @if (q.type === 'RatingScale') {
+                  <div class="flex gap-3 flex-wrap">
+                    @for (star of [1,2,3,4,5]; track star) {
+                      <button type="button" (click)="setRating(q.id, star)"
+                        class="w-14 h-14 rounded-xl border-2 text-lg font-semibold transition-all"
+                        [class]="getRatingClass(q.id, star)">{{ star }}</button>
+                    }
+                  </div>
+                }
+
+                @if (showErrors() && !isAnswered(q)) {
+                  <p class="text-xs text-red-500 mt-3">This question is required.</p>
+                }
+              </div>
+
+              <!-- Navigation — inside the card, separated by a divider -->
+              <div class="flex items-center justify-between px-8 py-5 bg-surface-50 border-t border-surface-100">
+                @if (currentQuestion() > 0) {
+                  <button type="button" (click)="prevQuestion()" class="btn-secondary">&larr; Back</button>
+                } @else {
+                  <div></div>
+                }
+
+                @if (currentQuestion() < survey()!.questions.length - 1) {
+                  <button type="button" (click)="nextQuestion()" class="btn-primary px-6">Next &rarr;</button>
+                } @else {
+                  <button type="submit" class="btn-primary px-6" [disabled]="submitting()">
+                    @if (submitting()) {
+                      <span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                    }
+                    Submit Response
+                  </button>
+                }
+              </div>
+            </div>
+          </form>
+        </div>
+      }
+    </div>
+  

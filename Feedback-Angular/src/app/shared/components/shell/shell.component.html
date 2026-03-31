@@ -1,0 +1,228 @@
+
+    <div class="flex h-screen overflow-hidden" style="background:#f1f5f9">
+
+      @if (sidebarOpen()) {
+        <div class="fixed inset-0 z-20 bg-black/50 lg:hidden" (click)="sidebarOpen.set(false)"></div>
+      }
+
+      <!-- ── Sidebar ── -->
+      <aside class="sidebar fixed inset-y-0 left-0 z-30 flex flex-col"
+        style="background:#16213e; border-right:1px solid rgba(255,255,255,0.06)"
+        [class.-translate-x-full]="!sidebarOpen()"
+        [class.translate-x-0]="sidebarOpen()">
+
+        <!-- Logo -->
+        <div class="flex items-center gap-3 px-5 flex-shrink-0"
+          style="height:64px; border-bottom:1px solid rgba(255,255,255,0.06)">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+            style="background:#818cf8">
+            <svg class="w-4 h-4" style="color:#ffffff" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm font-bold leading-none" style="color:#f1f5f9">SurveyFlow</p>
+            <p class="text-xs mt-0.5" style="color:#475569">Feedback Platform</p>
+          </div>
+        </div>
+
+        <!-- Nav -->
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-0.5 scrollbar-thin"
+          style="scrollbar-color:rgba(255,255,255,0.1) transparent">
+
+          <p class="text-xs font-semibold uppercase px-3 mb-2"
+            style="color:#334155; letter-spacing:0.1em; font-size:0.7rem">Menu</p>
+
+          @for (item of visibleNavItems(); track item.path) {
+            <a [routerLink]="item.path"
+              routerLinkActive="active-dark"
+              [routerLinkActiveOptions]="{ exact: item.path === '/dashboard' }"
+              class="dark-nav-link"
+              (click)="closeSidebarOnMobile()">
+              <span class="nav-icon w-5 flex-shrink-0" [innerHTML]="item.icon"></span>
+              <span class="flex-1">{{ item.label }}</span>
+            </a>
+
+            <!-- Context-aware sub-links under Surveys -->
+            @if (item.path === '/surveys' && activeSurveyId()) {
+              <div class="mt-0.5 mb-1">
+                <a [routerLink]="['/surveys', activeSurveyId(), 'builder']"
+                  routerLinkActive="active-dark" class="sub-link"
+                  (click)="closeSidebarOnMobile()">
+                  <span class="sub-link-dot"></span>
+                  <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                  Builder
+                </a>
+                <a [routerLink]="['/surveys', activeSurveyId(), 'responses']"
+                  routerLinkActive="active-dark" class="sub-link"
+                  (click)="closeSidebarOnMobile()">
+                  <span class="sub-link-dot"></span>
+                  <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 12h6m-6 4h6"/>
+                  </svg>
+                  Responses
+                </a>
+                <a [routerLink]="['/surveys', activeSurveyId(), 'analytics']"
+                  routerLinkActive="active-dark" class="sub-link"
+                  (click)="closeSidebarOnMobile()">
+                  <span class="sub-link-dot"></span>
+                  <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                  </svg>
+                  Analytics
+                </a>
+              </div>
+            }
+          }
+
+          <!-- New Survey quick action -->
+          <div class="pt-3 mt-2" style="border-top:1px solid rgba(255,255,255,0.06)">
+            <p class="text-xs font-semibold uppercase px-3 mb-2"
+              style="color:#334155; letter-spacing:0.1em; font-size:0.7rem">Actions</p>
+            <a routerLink="/surveys/new" class="dark-nav-link" style="color:#818cf8"
+              (click)="closeSidebarOnMobile()">
+              <span class="w-5 flex-shrink-0" style="color:#818cf8">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                </svg>
+              </span>
+              <span class="flex-1">New Survey</span>
+            </a>
+          </div>
+        </nav>
+
+        <!-- Bottom -->
+        <div class="px-3 pb-4 flex-shrink-0 space-y-0.5"
+          style="border-top:1px solid rgba(255,255,255,0.06); padding-top:12px">
+          <!-- User card -->
+          <div class="flex items-center gap-3 rounded-xl px-3 py-2.5 mt-1"
+            style="background:rgba(255,255,255,0.05)">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0"
+              style="background:#818cf8; color:#ffffff">
+              {{ userInitial() }}
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold truncate leading-none" style="color:#f1f5f9">
+                {{ auth.user()?.username }}
+              </p>
+              <p class="text-xs mt-0.5" style="color:#475569">{{ auth.user()?.role }}</p>
+            </div>
+            <button (click)="auth.logout()" title="Sign out"
+              class="w-7 h-7 rounded-lg flex items-center justify-center transition-all"
+              style="color:#475569"
+              onmouseenter="this.style.color='#f87171';this.style.background='rgba(248,113,113,0.1)'"
+              onmouseleave="this.style.color='#475569';this.style.background='transparent'">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ── Main ── -->
+      <div class="main-content flex-1 flex flex-col overflow-hidden">
+
+        <!-- Header -->
+        <header class="flex-shrink-0 flex items-center px-4 lg:px-6 gap-3 bg-white"
+          style="height:64px; border-bottom:1px solid #e2e8f0">
+
+          <button class="w-9 h-9 flex items-center justify-center rounded-lg text-surface-500 hover:bg-surface-100 transition-colors lg:hidden flex-shrink-0"
+            (click)="sidebarOpen.set(!sidebarOpen())" aria-label="Toggle menu">
+            @if (sidebarOpen()) {
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            } @else {
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+              </svg>
+            }
+          </button>
+
+          <!-- Search -->
+          <div class="flex-1 max-w-md">
+            <div class="relative">
+              <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"/>
+              </svg>
+              <input type="text" placeholder="Search surveys…"
+                class="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-surface-200 bg-surface-50 text-surface-700 placeholder:text-surface-400 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-brand-400 transition-all"/>
+            </div>
+          </div>
+
+          <div class="flex-1"></div>
+
+          <!-- Right: avatar + profile dropdown -->
+          <div class="relative">
+            <button
+              (click)="profileOpen.set(!profileOpen())"
+              class="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold focus:outline-none"
+              style="background:#818cf8; color:#ffffff">
+              {{ userInitial() }}
+            </button>
+
+            @if (profileOpen()) {
+              <!-- backdrop -->
+              <div class="fixed inset-0 z-40" (click)="profileOpen.set(false)"></div>
+              <!-- dropdown -->
+              <div class="absolute right-0 mt-2 w-56 rounded-2xl shadow-modal bg-white border border-surface-100 z-50 overflow-hidden"
+                style="top:100%">
+                <!-- user info -->
+                <div class="px-4 py-3" style="border-bottom:1px solid #f1f5f9">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0"
+                      style="background:#818cf8; color:#ffffff">
+                      {{ userInitial() }}
+                    </div>
+                    <div class="min-w-0">
+                      <p class="text-sm font-semibold text-surface-900 truncate">{{ auth.user()?.username }}</p>
+                      <p class="text-xs text-surface-400 truncate">{{ auth.user()?.email }}</p>
+                    </div>
+                  </div>
+                  <div class="mt-2">
+                    <span class="text-xs px-2 py-0.5 rounded-full font-medium"
+                      [class]="auth.isAdmin()
+                        ? 'bg-brand-50 text-brand-700 ring-1 ring-brand-200'
+                        : 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'">
+                      {{ auth.user()?.role }}
+                    </span>
+                  </div>
+                </div>
+                <!-- actions -->
+                <div class="p-1.5">
+                  <button (click)="auth.logout(); profileOpen.set(false)"
+                    class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-red-600 hover:bg-red-50 transition-colors font-medium">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                    Sign out
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto scrollbar-thin" style="background:#f1f5f9">
+          <div class="p-4 lg:p-6 max-w-7xl mx-auto">
+            <router-outlet />
+          </div>
+        </main>
+      </div>
+    </div>
+    <app-confirm-dialog />
+  

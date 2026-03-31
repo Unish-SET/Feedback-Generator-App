@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --sidebar-width: 260px;
+    --header-height: 64px;
+    --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * {
+    @apply border-surface-200;
+  }
+
+  body {
+    @apply font-sans text-surface-900 bg-surface-50 antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer components {
+  /* ─── Buttons ─────────────────────────────────────────── */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply btn bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 shadow-sm;
+  }
+
+  .btn-secondary {
+    @apply btn bg-surface-100 text-surface-700 hover:bg-surface-200 border border-surface-200;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-600 text-white hover:bg-red-700;
+  }
+
+  .btn-ghost {
+    @apply btn text-surface-600 hover:bg-surface-100 hover:text-surface-900;
+  }
+
+  .btn-sm {
+    @apply px-3 py-1.5 text-xs rounded-lg;
+  }
+
+  .btn-icon {
+    @apply btn p-2 rounded-lg;
+  }
+
+  /* ─── Cards ───────────────────────────────────────────── */
+  .card {
+    @apply bg-white rounded-2xl border border-surface-200 shadow-card;
+  }
+
+  .card-hover {
+    @apply card transition-all duration-200 hover:shadow-card-hover hover:border-brand-200 cursor-pointer;
+  }
+
+  /* ─── Inputs ──────────────────────────────────────────── */
+  .input {
+    @apply w-full rounded-xl border border-surface-200 bg-white px-3.5 py-2.5 text-sm text-surface-900 placeholder:text-surface-400 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500;
+  }
+
+  .input-error {
+    @apply border-red-400 focus:ring-red-500 focus:border-red-400;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-surface-700 mb-1.5;
+  }
+
+  /* ─── Badges ──────────────────────────────────────────── */
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .badge-draft {
+    @apply badge bg-surface-100 text-surface-600 ring-1 ring-inset ring-surface-300;
+  }
+
+  .badge-active {
+    @apply badge bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200;
+  }
+
+  .badge-closed {
+    @apply badge bg-red-50 text-red-700 ring-1 ring-inset ring-red-200;
+  }
+
+  /* ─── Skeleton Loader ─────────────────────────────────── */
+  .skeleton {
+    @apply animate-pulse bg-surface-200 rounded-lg;
+  }
+
+  /* ─── Sidebar ─────────────────────────────────────────── */
+  .nav-link {
+    @apply flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-surface-500 transition-all duration-150 hover:bg-surface-100 hover:text-surface-800;
+  }
+
+  .nav-link-active {
+    @apply flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium bg-brand-50 text-brand-700 transition-all duration-150 hover:bg-brand-100;
+  }
+
+  /* ─── Table ───────────────────────────────────────────── */
+  .table-wrapper {
+    @apply overflow-x-auto rounded-2xl border border-surface-200 bg-white;
+  }
+
+  th {
+    @apply px-4 py-3.5 text-left text-xs font-semibold text-surface-500 uppercase tracking-widest bg-surface-50 border-b border-surface-200 select-none;
+  }
+
+  td {
+    @apply px-4 py-3.5 text-sm text-surface-700 border-b border-surface-100;
+  }
+
+  tr:last-child td {
+    @apply border-0;
+  }
+
+  tr:hover td {
+    @apply bg-surface-50;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-600 to-violet-600 bg-clip-text text-transparent;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.surface.200') transparent;
+  }
+
+  .fade-in {
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  .slide-up {
+    animation: slideUp 0.25s ease-out;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Toast Notification ──────────────────────────────── */
+.toast-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  min-width: 300px;
+  max-width: 420px;
+}
+
+/* ─── Chart containers ────────────────────────────────── */
+.chart-container {
+  position: relative;
+  height: 280px;
+}

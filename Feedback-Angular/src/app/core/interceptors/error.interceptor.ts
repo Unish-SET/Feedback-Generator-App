@@ -1,0 +1,53 @@
+import {
+  HttpInterceptorFn, HttpRequest, HttpHandlerFn,
+  HttpEvent, HttpErrorResponse
+} from '@angular/common/http';
+import { inject } from '@angular/core';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { ToastService } from '../services/toast.service';
+import { AuthService } from '../services/auth.service';
+
+export const errorInterceptor: HttpInterceptorFn = (
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn
+): Observable<HttpEvent<unknown>> => {
+  const toast = inject(ToastService);
+  const auth = inject(AuthService);
+
+  return next(req).pipe(
+    catchError((error: HttpErrorResponse) => {
+      // Backend GlobalExceptionMiddleware returns:
+      // { success: false, statusCode, message, traceId }
+      const backendMessage = error.error?.message ?? '';
+
+      let userMessage = 'Something went wrong. Please try again.';
+
+      if (error.status === 0) {
+        userMessage = 'Unable to connect to server. Check your connection.';
+      } else if (error.status === 400) {
+        userMessage = backendMessage || 'Invalid input. Please check your data.';
+      } else if (error.status === 401) {
+        // LOGIN_REQUIRED: survey requires login (LoginOnly mode) — let component handle redirect
+        if (backendMessage === 'LOGIN_REQUIRED') {
+          return throwError(() => error);
+        }
+        userMessage = 'Session expired. Please log in again.';
+        auth.logout();
+      } else if (error.status === 403) {
+        userMessage = backendMessage || 'Access denied. You do not have permission.';
+      } else if (error.status === 404) {
+        userMessage = backendMessage || 'Resource not found.';
+      } else if (error.status === 409) {
+        userMessage = backendMessage || 'Conflict: this resource already exists.';
+      } else if (error.status === 429) {
+        userMessage = backendMessage || 'Too many requests. Please slow down and try again.';
+      } else if (error.status >= 500) {
+        userMessage = 'Server error. Please try again later.';
+      }
+
+      toast.error(userMessage);
+      return throwError(() => error);
+    })
+  );
+};

@@ -1,0 +1,52 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-brand-950 via-surface-900 to-surface-800 p-4">
+  <div class="w-full max-w-md">
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-600 shadow-lg mb-4">
+        <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+      </div>
+      <h1 class="text-2xl font-semibold text-white">Create Account</h1>
+      <p class="text-surface-400 text-sm mt-1">Join SurveyFlow as a Creator</p>
+    </div>
+    <div class="card p-8 shadow-modal">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
+        <div>
+          <label for="reg-username" class="label">Username</label>
+          <input id="reg-username" name="username" type="text" formControlName="username" class="input" [class.input-error]="isInvalid('username')"
+            placeholder="johndoe" autocomplete="username"/>
+          @if (isInvalid('username')) { <p class="text-xs text-red-500 mt-1">Username is required (min 3 chars).</p> }
+        </div>
+        <div>
+          <label for="reg-email" class="label">Email</label>
+          <input id="reg-email" name="email" type="email" formControlName="email" class="input" [class.input-error]="isInvalid('email')"
+            placeholder="you@example.com" autocomplete="email"/>
+          @if (isInvalid('email')) { <p class="text-xs text-red-500 mt-1">Valid email is required.</p> }
+        </div>
+        <div>
+          <label for="reg-password" class="label">Password</label>
+          <div class="relative">
+            <input id="reg-password" name="password" [type]="showPwd() ? 'text' : 'password'" formControlName="password" class="input pr-10"
+              [class.input-error]="isInvalid('password')" placeholder="Min. 8 characters" autocomplete="new-password"/>
+            <button type="button" (click)="showPwd.set(!showPwd())"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600">
+              {{ showPwd() ? '🙈' : '👁️' }}
+            </button>
+          </div>
+          @if (isInvalid('password')) { <p class="text-xs text-red-500 mt-1">Password must be at least 8 characters.</p> }
+        </div>
+        <button type="submit" class="btn-primary w-full py-2.5" [disabled]="loading()">
+          @if (loading()) {
+            <span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+            Creating account...
+          } @else { Create Account }
+        </button>
+      </form>
+      <p class="text-center text-sm text-surface-500 mt-5">
+        Already have an account?
+        <a [routerLink]="['/auth/login']" [queryParams]="returnUrl() ? { returnUrl: returnUrl() } : {}"
+          class="text-brand-600 font-medium hover:text-brand-700">Sign in</a>
+      </p>
+    </div>
+  </div>
+</div>

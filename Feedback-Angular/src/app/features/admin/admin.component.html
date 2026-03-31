@@ -1,0 +1,380 @@
+    <div class="space-y-6 slide-up">
+
+      <!-- Page Header -->
+      <div class="sticky top-0 z-10 -mx-4 lg:-mx-6 px-4 lg:px-6 py-3 bg-surface-50/95 backdrop-blur-sm border-b border-surface-100 mb-2">
+        <div class="max-w-7xl mx-auto">
+          <h1 class="text-xl font-bold text-surface-900 leading-none">Admin Panel</h1>
+          <p class="text-surface-400 text-xs mt-1">Manage users, surveys, and audit logs</p>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="card p-4">
+          <p class="text-xs font-semibold text-surface-400 uppercase tracking-wider mb-1">Total Users</p>
+          <p class="text-2xl font-bold text-surface-900">{{ userTotal() }}</p>
+        </div>
+        <div class="card p-4">
+          <p class="text-xs font-semibold text-surface-400 uppercase tracking-wider mb-1">Admins</p>
+          <p class="text-2xl font-bold text-brand-600">{{ countRole('Admin') }}</p>
+        </div>
+        <div class="card p-4">
+          <p class="text-xs font-semibold text-surface-400 uppercase tracking-wider mb-1">Active Surveys</p>
+          <p class="text-2xl font-bold text-emerald-600">{{ adminStats().activeSurveys }}</p>
+        </div>
+        <div class="card p-4">
+          <p class="text-xs font-semibold text-surface-400 uppercase tracking-wider mb-1">Total Responses</p>
+          <p class="text-2xl font-bold text-surface-900">{{ adminStats().totalResponses }}</p>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex gap-1 border-b border-surface-200">
+        <button (click)="activeTab.set('users')"
+          class="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors relative"
+          [class]="activeTab() === 'users' ? 'text-brand-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-brand-600' : 'text-surface-500 hover:text-surface-700'">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>Users
+        </button>
+        <button (click)="switchToSurveys()"
+          class="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors relative"
+          [class]="activeTab() === 'surveys' ? 'text-brand-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-brand-600' : 'text-surface-500 hover:text-surface-700'">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 12h6m-6 4h6"/>
+          </svg>Surveys
+        </button>
+        <button (click)="switchToAudit()"
+          class="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors relative"
+          [class]="activeTab() === 'audit' ? 'text-brand-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-brand-600' : 'text-surface-500 hover:text-surface-700'">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>Audit Logs
+        </button>
+      </div>
+
+      <!-- ═══ USERS TAB ═══ -->
+      @if (activeTab() === 'users') {
+        <!-- Filter bar -->
+        <div class="card p-4">
+          <div class="flex flex-wrap gap-3">
+            <div class="flex-1 min-w-48">
+              <input id="user-search" name="user-search" type="text" class="input text-sm" placeholder="Search username or email…"
+                [(ngModel)]="userSearch" (ngModelChange)="onUserSearchChange()" aria-label="Search users" />
+            </div>
+            <select id="user-role-filter" name="user-role-filter" class="input text-sm w-36" [(ngModel)]="userRoleFilter" (ngModelChange)="loadUsers()" aria-label="Filter by role">
+              <option value="">All Roles</option>
+              <option value="Admin">Admin</option>
+              <option value="Creator">Creator</option>
+            </select>
+            <input id="user-date-from" name="user-date-from" type="date" class="input text-sm w-40" [(ngModel)]="userFromDate" (ngModelChange)="loadUsers()" aria-label="Joined from" />
+            <input id="user-date-to" name="user-date-to" type="date" class="input text-sm w-40" [(ngModel)]="userToDate" (ngModelChange)="loadUsers()" aria-label="Joined to" />
+            <button (click)="loadUsers()" class="btn-secondary btn-sm px-3" title="Refresh">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        @if (loading()) {
+          <div class="card">
+            <table class="w-full">
+              <thead><tr><th>User</th><th>Role</th><th>Status</th><th class="hidden sm:table-cell">Surveys</th><th class="hidden sm:table-cell">Joined</th><th>Actions</th></tr></thead>
+              <tbody>
+                @for (i of [1,2,3,4,5]; track i) {
+                  <tr>
+                    <td><div class="flex items-center gap-3"><div class="skeleton w-9 h-9 rounded-xl"></div><div class="space-y-1.5"><div class="skeleton h-3.5 w-28 rounded"></div><div class="skeleton h-3 w-36 rounded"></div></div></div></td>
+                    <td><div class="skeleton h-5 w-16 rounded-full"></div></td>
+                    <td><div class="skeleton h-5 w-14 rounded-full"></div></td>
+                    <td><div class="skeleton h-4 w-20 rounded"></div></td>
+                    <td><div class="skeleton h-4 w-20 rounded"></div></td>
+                    <td><div class="skeleton h-8 w-32 rounded-lg"></div></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else if (enrichedUsers().length === 0) {
+          <div class="card"><app-empty-state type="users" /></div>
+        } @else {
+          <div class="table-wrapper">
+            <table class="w-full">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th class="hidden sm:table-cell">Surveys</th>
+                  <th class="hidden sm:table-cell">Joined</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (user of enrichedUsers(); track user.id) {
+                  <tr>
+                    <td>
+                      <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0"
+                          [class]="user.role === 'Admin' ? 'bg-brand-100 text-brand-700' : 'bg-surface-100 text-surface-600'">
+                          {{ user.username[0].toUpperCase() }}
+                        </div>
+                        <div class="min-w-0">
+                          <p class="text-sm font-semibold text-surface-900 truncate flex items-center gap-1.5">
+                            {{ user.username }}
+                            @if (user.id === auth.user()?.userId) {
+                              <span class="text-xs text-brand-500 font-normal">(you)</span>
+                            }
+                          </p>
+                          <p class="text-xs text-surface-400 truncate">{{ user.email }}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span [class]="user.role === 'Admin' ? 'badge badge-active' : 'badge badge-draft'">{{ user.role }}</span>
+                    </td>
+                    <td>
+                      <span [class]="user.isActive ? 'badge badge-active' : 'badge bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200'">
+                        {{ user.isActive ? 'Active' : 'Inactive' }}
+                      </span>
+                    </td>
+                    <td class="hidden sm:table-cell">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-sm font-semibold text-surface-800">{{ user.calculatedSurveyCount }}</span>
+                        <span class="text-xs text-surface-400">surveys</span>
+                      </div>
+                    </td>
+                    <td class="hidden sm:table-cell text-surface-500 text-sm">{{ user.createdAt | date:'MMM d, yyyy' }}</td>
+                    <td>
+                      <div class="flex items-center gap-1.5 flex-wrap">
+                        <button (click)="openUserDetail(user)" class="btn-secondary btn-sm" title="View detail">
+                          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                          </svg>
+                          View
+                        </button>
+                        @if (user.id !== auth.user()?.userId) {
+                          <button (click)="toggleStatus(user)" [disabled]="statusUserId() === user.id"
+                            class="btn btn-sm"
+                            [class]="user.isActive ? 'bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'">
+                            @if (statusUserId() === user.id) {
+                              <span class="inline-block w-3 h-3 border-2 border-current/30 border-t-current rounded-full animate-spin"></span>
+                            } @else { {{ user.isActive ? 'Deactivate' : 'Activate' }} }
+                          </button>
+                          <button (click)="toggleRole(user)" [disabled]="actionUserId() === user.id" class="btn-secondary btn-sm">
+                            @if (actionUserId() === user.id) {
+                              <span class="inline-block w-3 h-3 border-2 border-surface-400/30 border-t-surface-400 rounded-full animate-spin"></span>
+                            } @else { {{ user.role === 'Admin' ? 'Demote' : 'Promote' }} }
+                          </button>
+                          <button (click)="confirmDelete(user)" class="btn btn-ghost btn-sm text-red-500 hover:text-red-700 hover:bg-red-50" title="Delete">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                          </button>
+                        } @else {
+                          <span class="text-xs text-surface-400 italic">Current user</span>
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          @if (userTotalPages() > 1) {
+            <div class="flex items-center justify-between text-sm text-surface-500 px-1 mt-2">
+              <span>Showing {{ (userPage() - 1) * userPageSize + 1 }}&ndash;{{ min(userPage() * userPageSize, userTotal()) }} of {{ userTotal() }} users</span>
+              <div class="flex gap-2">
+                <button (click)="userPageChange(userPage() - 1)" [disabled]="userPage() === 1" class="btn-secondary btn-sm px-3">&larr; Prev</button>
+                <span class="flex items-center px-2 text-surface-400">{{ userPage() }} / {{ userTotalPages() }}</span>
+                <button (click)="userPageChange(userPage() + 1)" [disabled]="userPage() >= userTotalPages()" class="btn-secondary btn-sm px-3">Next &rarr;</button>
+              </div>
+            </div>
+          }
+        }
+      }
+
+      <!-- ═══ SURVEYS TAB ═══ -->
+      @if (activeTab() === 'surveys') {
+        <div class="card p-4">
+          <div class="flex flex-wrap gap-3">
+            <div class="flex-1 min-w-48">
+              <input id="admin-survey-search" name="admin-survey-search" type="text" class="input text-sm" placeholder="Search by title or creator…"
+                [(ngModel)]="surveySearch" (ngModelChange)="onSurveySearchChange()" aria-label="Search surveys" />
+            </div>
+            <select id="admin-survey-deleted" name="admin-survey-deleted" class="input text-sm w-40" [(ngModel)]="surveyDeletedFilter" (ngModelChange)="loadAdminSurveys()" aria-label="Filter by status">
+              <option value="false">Active Only</option>
+              <option value="true">Deleted Only</option>
+              <option value="">All Surveys</option>
+            </select>
+            <input id="admin-survey-from" name="admin-survey-from" type="date" class="input text-sm w-40" [(ngModel)]="surveyFromDate" (ngModelChange)="loadAdminSurveys()" aria-label="Created from" />
+            <input id="admin-survey-to" name="admin-survey-to" type="date" class="input text-sm w-40" [(ngModel)]="surveyToDate" (ngModelChange)="loadAdminSurveys()" aria-label="Created to" />
+            <button (click)="loadAdminSurveys()" class="btn-secondary btn-sm px-3" title="Refresh">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        @if (surveysLoading()) {
+          <div class="card"><div class="space-y-3 p-4">
+            @for (i of [1,2,3,4,5,6]; track i) {
+              <div class="flex gap-4 items-center">
+                <div class="skeleton h-4 w-40 rounded"></div><div class="skeleton h-4 w-20 rounded"></div>
+                <div class="skeleton h-4 w-24 rounded"></div><div class="skeleton h-4 flex-1 rounded"></div>
+              </div>
+            }
+          </div></div>
+        } @else if (adminSurveys().length === 0) {
+          <div class="card p-10 text-center">
+            <svg class="w-12 h-12 mx-auto text-surface-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            <p class="text-surface-500 text-sm">No surveys found.</p>
+          </div>
+        } @else {
+          <div class="table-wrapper">
+            <table class="w-full text-sm">
+              <thead>
+                <tr><th>Survey</th><th>Creator</th><th>Status</th><th>Responses</th><th class="hidden md:table-cell">Created</th><th>Actions</th></tr>
+              </thead>
+              <tbody>
+                @for (s of adminSurveys(); track s.id) {
+                  <tr [class]="s.isDeleted ? 'opacity-60 cursor-pointer' : 'cursor-pointer'" (click)="viewSurveyDetail(s.id)">
+                    <td>
+                      <div class="min-w-0">
+                        <p class="font-semibold text-surface-900 truncate max-w-[200px]">{{ s.title }}</p>
+                        @if (s.isDeleted) { <span class="text-xs text-red-500 font-medium">Deleted</span> }
+                      </div>
+                    </td>
+                    <td>
+                      <p class="text-surface-700">{{ s.createdBy }}</p>
+                      <p class="text-xs text-surface-400">{{ s.creatorEmail }}</p>
+                    </td>
+                    <td><span [class]="surveyBadgeClass(s.status)" class="badge text-xs">{{ s.status }}</span></td>
+                    <td class="font-semibold text-surface-800">{{ s.responseCount }}</td>
+                    <td class="hidden md:table-cell text-surface-500 text-xs whitespace-nowrap">{{ s.createdAt | date:'MMM d, y' }}</td>
+                    <td (click)="$event.stopPropagation()">
+                      <div class="flex items-center gap-1.5 flex-wrap">
+                        @if (!s.isDeleted) {
+                          @if (s.status !== 'Active') {
+                            <!-- ALIGN-02: renamed setSurveyStatus → setSurveyState -->
+                            <button (click)="setSurveyState(s.id, 'Active')" [disabled]="surveyActionId() === s.id"
+                              class="btn btn-sm bg-emerald-600 text-white hover:bg-emerald-700">Activate</button>
+                          }
+                          @if (s.status !== 'Inactive') {
+                            <!-- ALIGN-02 + fix: 'Draft' was an invalid state value — corrected to 'Inactive' -->
+                            <button (click)="setSurveyState(s.id, 'Inactive')" [disabled]="surveyActionId() === s.id"
+                              class="btn-secondary btn-sm">Pause</button>
+                          }
+                          @if (s.status !== 'Closed') {
+                            <button (click)="setSurveyState(s.id, 'Closed')" [disabled]="surveyActionId() === s.id"
+                              class="btn btn-sm bg-amber-500 text-white hover:bg-amber-600">Close</button>
+                          }
+                          <button (click)="softDeleteSurvey(s.id)" [disabled]="surveyActionId() === s.id"
+                            class="btn btn-ghost btn-sm text-red-500 hover:text-red-700 hover:bg-red-50" title="Delete">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                          </button>
+                        } @else {
+                          <span class="text-xs text-red-400 italic px-2">Deleted</span>
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <div class="flex items-center justify-between text-sm text-surface-500 px-1 mt-2">
+            <span>Showing {{ (surveyPage() - 1) * surveyPageSize + 1 }}&ndash;{{ min(surveyPage() * surveyPageSize, surveyTotal()) }} of {{ surveyTotal() }} surveys</span>
+            <div class="flex gap-2">
+              <button (click)="surveyPageChange(surveyPage() - 1)" [disabled]="surveyPage() === 1" class="btn-secondary btn-sm px-3">&larr; Prev</button>
+              <span class="flex items-center px-2 text-surface-400">{{ surveyPage() }} / {{ surveyTotalPages() }}</span>
+              <button (click)="surveyPageChange(surveyPage() + 1)" [disabled]="surveyPage() >= surveyTotalPages()" class="btn-secondary btn-sm px-3">Next &rarr;</button>
+            </div>
+          </div>
+        }
+      }
+
+      <!-- ═══ AUDIT LOGS TAB ═══ -->
+      @if (activeTab() === 'audit') {
+        <div class="card p-4">
+          <div class="flex flex-wrap gap-3">
+            <div class="flex-1 min-w-48">
+              <input id="audit-search" name="audit-search" type="text" class="input text-sm" placeholder="Search user, action, entity…"
+                [(ngModel)]="auditSearch" (ngModelChange)="onSearchChange()" aria-label="Search audit logs" />
+            </div>
+            <select id="audit-action" name="audit-action" class="input text-sm w-40" [(ngModel)]="auditActionFilter" (ngModelChange)="loadAuditLogs()" aria-label="Filter by action">
+              <option value="">All Actions</option>
+              @for (a of auditMeta().actions; track a) { <option [value]="a">{{ a }}</option> }
+            </select>
+            <select id="audit-entity" name="audit-entity" class="input text-sm w-40" [(ngModel)]="auditEntityFilter" (ngModelChange)="loadAuditLogs()" aria-label="Filter by entity">
+              <option value="">All Entities</option>
+              @for (e of auditMeta().entities; track e) { <option [value]="e">{{ e }}</option> }
+            </select>
+            <input id="audit-date-from" name="audit-date-from" type="date" class="input text-sm w-36" [(ngModel)]="auditFromDate" (ngModelChange)="loadAuditLogs()" aria-label="From date" />
+            <input id="audit-date-to" name="audit-date-to" type="date" class="input text-sm w-36" [(ngModel)]="auditToDate" (ngModelChange)="loadAuditLogs()" aria-label="To date" />
+            <button (click)="loadAuditLogs()" class="btn-secondary btn-sm px-3" title="Refresh">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        @if (auditLoading()) {
+          <div class="card"><div class="space-y-3 p-4">
+            @for (i of [1,2,3,4,5,6,7,8]; track i) {
+              <div class="flex gap-4 items-center">
+                <div class="skeleton h-4 w-32 rounded"></div><div class="skeleton h-4 w-20 rounded"></div>
+                <div class="skeleton h-4 w-24 rounded"></div><div class="skeleton h-4 flex-1 rounded"></div>
+              </div>
+            }
+          </div></div>
+        } @else if (auditLogs().length === 0) {
+          <div class="card p-10 text-center">
+            <svg class="w-12 h-12 mx-auto text-surface-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <p class="text-surface-500 text-sm">No audit logs found.</p>
+          </div>
+        } @else {
+          <div class="table-wrapper">
+            <table class="w-full text-sm">
+              <thead>
+                <tr><th>Timestamp</th><th>User</th><th>Action</th><th>Entity</th><th class="hidden md:table-cell">ID</th><th class="hidden lg:table-cell">IP</th><th>Changes</th></tr>
+              </thead>
+              <tbody>
+                @for (log of auditLogs(); track log.id) {
+                  <tr>
+                    <td class="whitespace-nowrap text-xs text-surface-500">{{ log.timestamp | date:'MMM d, y, HH:mm:ss' }}</td>
+                    <td>
+                      <span class="font-medium text-surface-800">{{ log.username }}</span>
+                      @if (log.userId) { <span class="text-xs text-surface-400 ml-1">#{{ log.userId }}</span> }
+                    </td>
+                    <td><span [class]="actionBadgeClass(log.action)" class="badge text-xs">{{ log.action }}</span></td>
+                    <td class="text-surface-700 font-medium">{{ log.entityName }}</td>
+                    <td class="hidden md:table-cell text-surface-400 text-xs">{{ log.entityId ?? '—' }}</td>
+                    <td class="hidden lg:table-cell text-surface-400 text-xs">{{ log.ipAddress ?? '—' }}</td>
+                    <td>
+                      @if (log.changes) {
+                        <button (click)="viewChanges(log)" class="text-xs text-brand-600 hover:text-brand-800 underline underline-offset-2">View</button>
+                      } @else { <span class="text-surface-300 text-xs">—</span> }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <div class="flex items-center justify-between text-sm text-surface-500 px-1 mt-2">
+            <span>Showing {{ (auditPage() - 1) * auditPageSize + 1 }}&ndash;{{ min(auditPage() * auditPageSize, auditTotal()) }} of {{ auditTotal() }} logs</span>
+            <div class="flex gap-2">
+              <button (click)="auditPageChange(auditPage() - 1)" [disabled]="auditPage() === 1" class="btn-secondary btn-sm px-3">&larr; Prev</button>
+              <span class="flex items-center px-2 text-surface-400">{{ auditPage() }} / {{ auditTotalPages() }}</span>
+              <button (click)="auditPageChange(auditPage() + 1)" [disabled]="auditPage() >= auditTotalPages()" class="btn-secondary btn-sm px-3">Next &rarr;</button>
+            </div>
+          </div>
+        }
+      }

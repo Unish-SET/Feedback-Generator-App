@@ -1,0 +1,132 @@
+
+    <div class="max-w-2xl mx-auto slide-up">
+      <!-- Breadcrumb -->
+      <div class="flex items-center gap-2 text-sm text-surface-400 mb-6">
+        <a routerLink="/surveys" class="hover:text-surface-700">Surveys</a>
+        <span>›</span>
+        <span class="text-surface-700">{{ isEdit() ? survey()?.title || 'Edit Survey' : 'New Survey' }}</span>
+      </div>
+
+      <div class="card p-8">
+        <!-- Read-only banner for non-Draft surveys -->
+        @if (isEdit() && !loadingData() && !isDraft()) {
+          <div class="flex items-center gap-3 p-4 rounded-xl mb-6"
+            style="background:#fff7ed; border:1px solid #fed7aa">
+            <svg class="w-5 h-5 flex-shrink-0" style="color:#ea580c" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+            </svg>
+            <div>
+              <p class="text-sm font-semibold" style="color:#9a3412">Survey is {{ survey()?.state }} — read only</p>
+              <p class="text-xs mt-0.5" style="color:#c2410c">
+                @if (survey()?.state === 'Active') {
+                  This survey is live. Pause it first to edit its settings.
+                } @else {
+                  Closed surveys cannot be edited. Reopen to make it editable again.
+                }
+              </p>
+            </div>
+            <div class="ml-auto flex gap-2">
+              @if (survey()?.state === 'Closed') {
+                <a [routerLink]="['/surveys', id(), 'builder']" class="btn-primary btn-sm">Reopen &rarr;</a>
+              }
+              <a routerLink="/surveys" class="btn-secondary btn-sm">Back</a>
+            </div>
+          </div>
+        }
+
+        <h1 class="text-xl font-semibold text-surface-900 mb-6">
+          {{ isEdit() ? 'Survey Settings' : 'Create New Survey' }}
+        </h1>
+
+        @if (loadingData()) {
+          <div class="space-y-4">
+            @for (i of [1,2,3,4]; track i) {
+              <div class="skeleton h-12 rounded-xl"></div>
+            }
+          </div>
+        } @else {
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+            <div>
+              <label for="survey-title" class="label">Title <span class="text-red-500">*</span></label>
+              <input
+                id="survey-title"
+                name="title"
+                type="text"
+                formControlName="title"
+                class="input"
+                [class.input-error]="isInvalid('title')"
+                placeholder="e.g. Customer Satisfaction Survey"
+                [attr.readonly]="!isDraft() && isEdit() ? true : null"
+              />
+              @if (isInvalid('title')) {
+                <p class="text-xs text-red-500 mt-1">Title is required.</p>
+              }
+            </div>
+
+            <div>
+              <label for="survey-description" class="label">Description</label>
+              <textarea
+                id="survey-description"
+                name="description"
+                formControlName="description"
+                rows="3"
+                class="input resize-none"
+                placeholder="Brief description of this survey..."
+                [attr.readonly]="!isDraft() && isEdit() ? true : null"
+              ></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="survey-start-date" class="label">Start Date</label>
+                <input id="survey-start-date" name="startDate" type="datetime-local" formControlName="startDate" class="input"
+                  [attr.readonly]="!isDraft() && isEdit() ? true : null" />
+              </div>
+              <div>
+                <label for="survey-end-date" class="label">End Date</label>
+                <input id="survey-end-date" name="endDate" type="datetime-local" formControlName="endDate" class="input"
+                  [attr.readonly]="!isDraft() && isEdit() ? true : null" />
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 p-4 rounded-xl"
+              [class]="!isDraft() && isEdit() ? 'bg-surface-100 opacity-60' : 'bg-surface-50'">
+              <input
+                id="allowAnonymous"
+                type="checkbox"
+                formControlName="allowAnonymous"
+                class="w-4 h-4 rounded text-brand-600 border-surface-300 focus:ring-brand-500"
+                [attr.disabled]="!isDraft() && isEdit() ? true : null"
+              />
+              <label for="allowAnonymous" class="text-sm text-surface-700 cursor-pointer">
+                <span class="font-medium">Allow Anonymous Responses</span>
+                <span class="block text-xs text-surface-400 mt-0.5">Respondents can submit without logging in</span>
+              </label>
+            </div>
+
+            <!-- Only show save button for Draft or new surveys -->
+            @if (!isEdit() || isDraft()) {
+              <div class="flex gap-3 pt-2">
+                <button type="submit" class="btn-primary" [disabled]="loading()">
+                  @if (loading()) {
+                    <span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                  }
+                  {{ isEdit() ? 'Save Changes' : 'Create Survey' }}
+                </button>
+                <a routerLink="/surveys" class="btn-secondary">Cancel</a>
+              </div>
+            } @else {
+              <div class="flex gap-3 pt-2">
+                <a routerLink="/surveys" class="btn-secondary">&larr; Back to Surveys</a>
+                @if (survey()?.state === 'Active') {
+                  <a [routerLink]="['/surveys', id(), 'builder']" class="btn-ghost btn-sm">
+                    View Builder &rarr;
+                  </a>
+                }
+              </div>
+            }
+          </form>
+        }
+      </div>
+    </div>
+  

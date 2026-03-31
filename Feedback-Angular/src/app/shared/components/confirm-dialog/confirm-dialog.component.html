@@ -1,0 +1,47 @@
+
+    @if (dialog.visible()) {
+      <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm fade-in" (click)="dialog.decline()">
+        <div class="card p-6 w-full max-w-sm shadow-modal slide-up" (click)="$event.stopPropagation()">
+
+          <!-- Icon -->
+          <div class="flex justify-center mb-4">
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center"
+              [class]="dialog.data().danger ? 'bg-red-50' : 'bg-brand-50'">
+              <svg class="w-7 h-7" [class]="dialog.data().danger ? 'text-red-500' : 'text-brand-600'" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                @if (dialog.data().danger) {
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                } @else {
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18.75h.007v.008H12v-.008Z" />
+                }
+              </svg>
+            </div>
+          </div>
+
+          <!-- Title -->
+          <h3 class="text-center text-lg font-semibold text-surface-900 mb-1">{{ dialog.data().title }}</h3>
+
+          <!-- Message -->
+          <p class="text-center text-sm text-surface-500 mb-6">{{ dialog.data().message }}</p>
+
+          <!-- Actions -->
+          <div class="flex gap-3">
+            <button
+              (click)="dialog.decline()"
+              class="btn-secondary btn-sm flex-1"
+            >
+              {{ dialog.data().cancelLabel }}
+            </button>
+            <button
+              (click)="dialog.accept()"
+              class="btn btn-sm flex-1 text-white"
+              [class]="dialog.data().danger ? 'bg-red-600 hover:bg-red-700' : 'bg-brand-600 hover:bg-brand-700'"
+            >
+              {{ dialog.data().confirmLabel }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  

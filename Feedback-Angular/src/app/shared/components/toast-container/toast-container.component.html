@@ -1,0 +1,17 @@
+
+    <div class="toast-container">
+      @for (toast of toastService.toasts(); track toast.id) {
+        <div
+          class="toast card flex items-start gap-3 p-4 shadow-modal fade-in"
+          [class]="toastClass(toast)"
+        >
+          <span class="text-lg leading-none mt-0.5">{{ toastIcon(toast) }}</span>
+          <span class="flex-1 text-sm font-medium">{{ toast.message }}</span>
+          <button
+            (click)="toastService.dismiss(toast.id)"
+            class="text-current opacity-50 hover:opacity-100 transition-opacity ml-2 text-lg leading-none"
+          >×</button>
+        </div>
+      }
+    </div>
+  

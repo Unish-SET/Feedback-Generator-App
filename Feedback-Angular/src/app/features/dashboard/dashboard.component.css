@@ -1,0 +1,9 @@
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.count-anim { animation: countUp 0.4s ease-out forwards; font-variant-numeric: tabular-nums; }
+.stat-card { transition: box-shadow 0.2s, transform 0.2s; cursor: pointer; }
+.stat-card:hover { box-shadow: 0 8px 24px -4px rgba(0,0,0,0.1); transform: translateY(-2px); }
+.survey-row { transition: background 0.15s; }
+.survey-row:hover { background: #f8fafc; }
