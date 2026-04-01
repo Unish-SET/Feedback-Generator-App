@@ -1,0 +1,89 @@
+# ─── .NET Backend ─────────────────────────────────────────────────────────────
+
+# Build output
+Feedback-Backend/**/bin/
+Feedback-Backend/**/obj/
+
+# Visual Studio
+Feedback-Backend/**/.vs/
+Feedback-Backend/**/*.user
+Feedback-Backend/**/*.suo
+Feedback-Backend/**/*.userosscache
+Feedback-Backend/**/*.sln.docstates
+
+# Rider
+Feedback-Backend/**/.idea/
+
+# NuGet
+Feedback-Backend/**/packages/
+Feedback-Backend/**/*.nupkg
+Feedback-Backend/**/*.snupkg
+Feedback-Backend/**/project.lock.json
+Feedback-Backend/**/project.fragment.lock.json
+
+# Publish output
+Feedback-Backend/**/publish/
+Feedback-Backend/**/*.pubxml
+Feedback-Backend/**/*.pubxml.user
+
+# Entity Framework migrations temp
+Feedback-Backend/**/*.ef.json
+
+# User secrets (never commit these)
+Feedback-Backend/**/secrets.json
+Feedback-Backend/**/appsettings.Development.json
+
+# Test results
+Feedback-Backend/**/TestResults/
+Feedback-Backend/**/*.trx
+Feedback-Backend/**/*.coverage
+Feedback-Backend/**/*.coveragexml
+
+# ─── Angular Frontend ──────────────────────────────────────────────────────────
+
+# Dependencies
+Feedback-Angular/node_modules/
+
+# Build output
+Feedback-Angular/dist/
+
+# Angular cache
+Feedback-Angular/.angular/
+
+# Environment files (contain API URLs / secrets)
+Feedback-Angular/src/environments/environment.development.ts
+
+# Coverage
+Feedback-Angular/coverage/
+
+# ─── OS & Editor ──────────────────────────────────────────────────────────────
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# VS Code
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+.vscode/*.code-workspace
+
+# JetBrains
+.idea/
+*.iml
+
+# ─── Logs & Misc ──────────────────────────────────────────────────────────────
+
+*.log
+*.tmp
+*.temp
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

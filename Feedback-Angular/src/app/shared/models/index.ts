@@ -98,10 +98,7 @@ export interface UpdateSurveyRequest {
   endDate?: string | null;
 }
 
-// ─── Questions ─────────────────────────────────────────────────────────────
-export type QuestionType = 'ShortText' | 'LongText' | 'SingleChoice' | 'MultipleChoice' | 'RatingScale';
-
-// Backend: OptionResponseDto
+// ─── Questions ─────────────────────────────────────────────────────────────// Backend: OptionResponseDto
 export interface QuestionOption {
   id: number;
   text: string;
@@ -240,8 +237,6 @@ export interface AppUser {
 export interface UpdateRoleRequest {
   role: string;
 }
-
-export type UserRole = 'Admin' | 'Creator';
 
 // ─── Toast ─────────────────────────────────────────────────────────────────
 export type ToastType = 'success' | 'error' | 'info' | 'warning';

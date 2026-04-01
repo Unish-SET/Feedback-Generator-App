@@ -32,12 +32,6 @@ export class QuestionBankService {
       .pipe(map(r => r.data));
   }
 
-  // GET /api/question-bank/{id} → { success, data: BankQuestionDto }
-  getById(id: number): Observable<BankQuestion> {
-    return this.http.get<ApiResponse<BankQuestion>>(`${this.base}/${id}`)
-      .pipe(map(r => r.data));
-  }
-
   // POST /api/question-bank → { success, data: BankQuestionDto }
   create(req: CreateBankQuestionRequest): Observable<BankQuestion> {
     return this.http.post<ApiResponse<BankQuestion>>(this.base, req)

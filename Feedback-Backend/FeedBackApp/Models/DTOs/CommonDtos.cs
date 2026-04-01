@@ -159,19 +159,6 @@ namespace FeedBackApp.Models.DTOs
         public int      QuestionCount  { get; set; }
     }
 
-    // ── Set Survey Status ─────────────────────────────────────────────────────
-    public class SetSurveyStatusDto
-    {
-        /// <summary>Draft, Active, or Closed</summary>
-        public string Status { get; set; } = string.Empty;
-    }
-
-    // ── Set Survey Availability ───────────────────────────────────────────────
-    public class SetSurveyAvailabilityDto
-    {
-        public bool IsActive { get; set; }
-    }
-
     // ── Audit Filters ─────────────────────────────────────────────────────────
     public class AuditFilterParams : PaginationParams
     {

@@ -1,6 +1,6 @@
 import {
   Component, inject, signal, OnInit,
-  AfterViewInit, ViewChild, ElementRef, OnDestroy
+  ViewChild, ElementRef, OnDestroy
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -19,7 +19,7 @@ Chart.register(...registerables);
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
+export class DashboardComponent implements OnInit, OnDestroy {
   private readonly surveyService   = inject(SurveyService);
   private readonly analyticsService = inject(AnalyticsService);
   readonly auth = inject(AuthService);
@@ -46,7 +46,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void  { this.loadData(); }
-  ngAfterViewInit(): void {}
   ngOnDestroy(): void {
     this.chart?.destroy();
     if (this.animFrame) cancelAnimationFrame(this.animFrame);

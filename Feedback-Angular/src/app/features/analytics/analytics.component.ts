@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy, Component, inject, signal,
-  OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef, input
+  OnInit, OnDestroy, ViewChild, ElementRef, input
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -24,7 +24,7 @@ Chart.register(...registerables);
   imports: [CommonModule, RouterLink, ReactiveFormsModule, EmptyStateComponent],
   templateUrl: './analytics.component.html'
 })
-export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
+export class AnalyticsComponent implements OnInit, OnDestroy {
   private readonly analyticsService = inject(AnalyticsService);
   private readonly surveyService    = inject(SurveyService);
   private readonly fb               = inject(FormBuilder);
@@ -99,8 +99,6 @@ export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.reload$.next();
     });
   }
-
-  ngAfterViewInit(): void {}
 
   ngOnDestroy(): void {
     this.destroyCharts();

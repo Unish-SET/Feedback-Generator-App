@@ -28,10 +28,6 @@ export const errorInterceptor: HttpInterceptorFn = (
       } else if (error.status === 400) {
         userMessage = backendMessage || 'Invalid input. Please check your data.';
       } else if (error.status === 401) {
-        // LOGIN_REQUIRED: survey requires login (LoginOnly mode) — let component handle redirect
-        if (backendMessage === 'LOGIN_REQUIRED') {
-          return throwError(() => error);
-        }
         userMessage = 'Session expired. Please log in again.';
         auth.logout();
       } else if (error.status === 403) {
