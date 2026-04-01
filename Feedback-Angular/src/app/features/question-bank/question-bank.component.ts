@@ -161,13 +161,14 @@ export class QuestionBankComponent implements OnInit {
     };
 
     this.saving.set(true);
-    const op = this.editingId()
-      ? this.bankService.update(this.editingId()!, payload)
+    const editId = this.editingId();
+    const op = editId
+      ? this.bankService.update(editId, payload)
       : this.bankService.create(payload);
 
     op.subscribe({
       next: () => {
-        this.toast.success(this.editingId() ? 'Question updated.' : 'Question created.');
+        this.toast.success(editId ? 'Question updated.' : 'Question created.');
         this.showFormModal.set(false);
         this.saving.set(false);
         this.load();
@@ -185,7 +186,8 @@ export class QuestionBankComponent implements OnInit {
     });
     if (!ok) return;
     this.bankService.delete(q.id).subscribe({
-      next: () => { this.toast.success('Question deleted.'); this.load(); }
+      next: () => { this.toast.success('Question deleted.'); this.load(); },
+      error: () => {}
     });
   }
 

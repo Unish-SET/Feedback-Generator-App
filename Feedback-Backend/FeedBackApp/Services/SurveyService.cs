@@ -14,20 +14,17 @@ namespace FeedBackApp.Services
         private readonly IRepository<Survey>         _surveyRepo;
         private readonly IRepository<Question>       _questionRepo;
         private readonly IRepository<QuestionOption> _optionRepo;
-        private readonly IRepository<User>           _userRepo;
         private readonly IAuditService               _audit;
 
         public SurveyService(
             IRepository<Survey>         surveyRepo,
             IRepository<Question>       questionRepo,
             IRepository<QuestionOption> optionRepo,
-            IRepository<User>           userRepo,
             IAuditService               audit)
         {
             _surveyRepo   = surveyRepo;
             _questionRepo = questionRepo;
             _optionRepo   = optionRepo;
-            _userRepo     = userRepo;
             _audit        = audit;
         }
 

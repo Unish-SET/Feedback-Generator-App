@@ -76,6 +76,16 @@ namespace FeedBackApp.Services
             if (missingRequired.Any())
                 throw new BadRequestException($"Required questions not answered: {string.Join(", ", missingRequired)}");
 
+            // 6b. Validate SelectedOptionId belongs to the answered question
+            var surveyQuestionMap = survey.Questions.ToDictionary(q => q.Id, q => q.Options.Select(o => o.Id).ToHashSet());
+            foreach (var answer in dto.Answers.Where(a => a.SelectedOptionId.HasValue))
+            {
+                if (surveyQuestionMap.TryGetValue(answer.QuestionId, out var validOptionIds) &&
+                    !validOptionIds.Contains(answer.SelectedOptionId!.Value))
+                    throw new BadRequestException(
+                        $"Option {answer.SelectedOptionId} does not belong to question {answer.QuestionId}.");
+            }
+
             // 7. Create response atomically
             var response = new SurveyResponse
             {

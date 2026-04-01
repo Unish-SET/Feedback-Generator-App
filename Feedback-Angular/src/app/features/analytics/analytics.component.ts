@@ -3,7 +3,7 @@ import {
   OnInit, OnDestroy, ViewChild, ElementRef, input
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { Subject, EMPTY } from 'rxjs';
 import { catchError, switchMap, startWith, takeUntil } from 'rxjs/operators';
@@ -27,6 +27,7 @@ Chart.register(...registerables);
 export class AnalyticsComponent implements OnInit, OnDestroy {
   private readonly analyticsService = inject(AnalyticsService);
   private readonly surveyService    = inject(SurveyService);
+  private readonly router           = inject(Router);
   private readonly fb               = inject(FormBuilder);
 
   readonly id = input<string>('');
@@ -66,7 +67,8 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.surveyService.getById(Number(this.id())).subscribe({
-      next: s => this.survey.set(s)
+      next: s => this.survey.set(s),
+      error: () => this.router.navigate(['/surveys'])
     });
 
     // ─── Reactive pipeline ────────────────────────────────────────────────

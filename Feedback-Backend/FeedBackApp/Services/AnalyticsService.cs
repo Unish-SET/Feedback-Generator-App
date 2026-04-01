@@ -84,17 +84,25 @@ namespace FeedBackApp.Services
                         break;
 
                     case Models.Enums.QuestionType.SingleChoice:
-                        var totalSingle = question.Answers.Count(a => a.SelectedOptionId.HasValue);
+                        var countsByOption = question.Answers
+                            .Where(a => a.SelectedOptionId.HasValue)
+                            .GroupBy(a => a.SelectedOptionId!.Value)
+                            .ToDictionary(g => g.Key, g => g.Count());
+                        var totalSingle = countsByOption.Values.Sum();
                         qa.OptionDistributions = question.Options
                             .OrderBy(o => o.Order)
-                            .Select(o => new OptionDistributionDto
+                            .Select(o =>
                             {
-                                OptionId   = o.Id,
-                                OptionText = o.Text,
-                                Count      = question.Answers.Count(a => a.SelectedOptionId == o.Id),
-                                Percentage = totalSingle > 0
-                                    ? Math.Round((double)question.Answers.Count(a => a.SelectedOptionId == o.Id) / totalSingle * 100, 2)
-                                    : 0
+                                var count = countsByOption.GetValueOrDefault(o.Id, 0);
+                                return new OptionDistributionDto
+                                {
+                                    OptionId   = o.Id,
+                                    OptionText = o.Text,
+                                    Count      = count,
+                                    Percentage = totalSingle > 0
+                                        ? Math.Round((double)count / totalSingle * 100, 2)
+                                        : 0
+                                };
                             }).ToList();
                         break;
 

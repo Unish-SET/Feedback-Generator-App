@@ -1,5 +1,4 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
@@ -34,7 +33,6 @@ export class PublicSurveyComponent implements OnInit {
   readonly showErrors       = signal(false);
 
   readonly responseForm: FormGroup = this.fb.group({});
-  readonly formValues = toSignal(this.responseForm.valueChanges, { initialValue: {} as Record<string, unknown> });
   private checkboxAnswers = new Map<number, Set<number>>();
   private ratingAnswers   = new Map<number, number>();
 
@@ -140,7 +138,9 @@ export class PublicSurveyComponent implements OnInit {
   }
 
   nextQuestion(): void {
-    const q = this.survey()!.questions[this.currentQuestion()];
+    const s = this.survey();
+    if (!s) return;
+    const q = s.questions[this.currentQuestion()];
     if (!this.isAnswered(q)) { this.showErrors.set(true); return; }
     this.showErrors.set(false);
     this.currentQuestion.update(n => n + 1);
@@ -152,7 +152,8 @@ export class PublicSurveyComponent implements OnInit {
   }
 
   submit(): void {
-    const s = this.survey()!;
+    const s = this.survey();
+    if (!s) return;
     const invalid = s.questions.find(q => !this.isAnswered(q));
     if (invalid) { this.showErrors.set(true); return; }
 

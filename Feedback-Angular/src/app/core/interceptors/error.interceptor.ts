@@ -28,8 +28,12 @@ export const errorInterceptor: HttpInterceptorFn = (
       } else if (error.status === 400) {
         userMessage = backendMessage || 'Invalid input. Please check your data.';
       } else if (error.status === 401) {
-        userMessage = 'Session expired. Please log in again.';
-        auth.logout();
+        if (auth.isAuthenticated()) {
+          userMessage = 'Session expired. Please log in again.';
+          auth.logout();
+        } else {
+          userMessage = 'Authentication required.';
+        }
       } else if (error.status === 403) {
         userMessage = backendMessage || 'Access denied. You do not have permission.';
       } else if (error.status === 404) {

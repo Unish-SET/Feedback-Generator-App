@@ -31,7 +31,7 @@ namespace FeedBackApp.Tests
             _jwtSectionMock.Setup(s => s["ExpiryMinutes"]).Returns("60");
             _configMock.Setup(c => c.GetSection("JwtSettings")).Returns(_jwtSectionMock.Object);
 
-            _authService = new AuthService(_userRepoMock.Object, _configMock.Object);
+            _authService = new AuthService(_userRepoMock.Object, _configMock.Object, new Mock<IAuditService>().Object);
         }
 
         [Test]

@@ -28,7 +28,7 @@ namespace FeedBackApp.Controllers
             // Left join — keeps logs where UserId is null or user was deleted
             var query = _db.AuditLogs
                 .GroupJoin(
-                    _db.Users,
+                    _db.Users.IgnoreQueryFilters(),
                     log  => log.UserId,
                     user => (int?)user.Id,
                     (log, users) => new { log, users })
