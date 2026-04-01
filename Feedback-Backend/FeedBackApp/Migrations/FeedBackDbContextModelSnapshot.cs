@@ -261,17 +261,8 @@ namespace FeedBackApp.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsPublic")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsRestricted")
-                        .HasColumnType("bit");
-
                     b.Property<Guid>("PublicToken")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("RequireLogin")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
@@ -301,42 +292,6 @@ namespace FeedBackApp.Migrations
                     b.HasIndex("State");
 
                     b.ToTable("Surveys");
-                });
-
-            modelBuilder.Entity("FeedBackApp.Models.SurveyAccess", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int>("SurveyId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("SurveyId", "Email")
-                        .IsUnique()
-                        .HasFilter("[Email] IS NOT NULL");
-
-                    b.HasIndex("SurveyId", "UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
-
-                    b.ToTable("SurveyAccesses");
                 });
 
             modelBuilder.Entity("FeedBackApp.Models.SurveyResponse", b =>
@@ -503,23 +458,6 @@ namespace FeedBackApp.Migrations
                     b.Navigation("Creator");
                 });
 
-            modelBuilder.Entity("FeedBackApp.Models.SurveyAccess", b =>
-                {
-                    b.HasOne("FeedBackApp.Models.Survey", "Survey")
-                        .WithMany("AccessList")
-                        .HasForeignKey("SurveyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FeedBackApp.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Survey");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("FeedBackApp.Models.SurveyResponse", b =>
                 {
                     b.HasOne("FeedBackApp.Models.Survey", "Survey")
@@ -551,8 +489,6 @@ namespace FeedBackApp.Migrations
 
             modelBuilder.Entity("FeedBackApp.Models.Survey", b =>
                 {
-                    b.Navigation("AccessList");
-
                     b.Navigation("Questions");
 
                     b.Navigation("Responses");

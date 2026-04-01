@@ -90,9 +90,6 @@ namespace FeedBackApp.Migrations
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     AllowAnonymous = table.Column<bool>(type: "bit", nullable: false),
-                    IsPublic = table.Column<bool>(type: "bit", nullable: false),
-                    RequireLogin = table.Column<bool>(type: "bit", nullable: false),
-                    IsRestricted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -151,33 +148,6 @@ namespace FeedBackApp.Migrations
                         principalTable: "Surveys",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SurveyAccesses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SurveyId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SurveyAccesses", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SurveyAccesses_Surveys_SurveyId",
-                        column: x => x.SurveyId,
-                        principalTable: "Surveys",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SurveyAccesses_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -297,25 +267,6 @@ namespace FeedBackApp.Migrations
                 column: "SurveyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SurveyAccesses_SurveyId_Email",
-                table: "SurveyAccesses",
-                columns: new[] { "SurveyId", "Email" },
-                unique: true,
-                filter: "[Email] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SurveyAccesses_SurveyId_UserId",
-                table: "SurveyAccesses",
-                columns: new[] { "SurveyId", "UserId" },
-                unique: true,
-                filter: "[UserId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SurveyAccesses_UserId",
-                table: "SurveyAccesses",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_SurveyResponses_SubmittedAt",
                 table: "SurveyResponses",
                 column: "SubmittedAt");
@@ -392,9 +343,6 @@ namespace FeedBackApp.Migrations
 
             migrationBuilder.DropTable(
                 name: "BankQuestionOptions");
-
-            migrationBuilder.DropTable(
-                name: "SurveyAccesses");
 
             migrationBuilder.DropTable(
                 name: "QuestionOptions");
