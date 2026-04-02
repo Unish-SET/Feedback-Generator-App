@@ -33,9 +33,7 @@ namespace FeedBackApp.Services
             if (await _userRepo.AnyAsync(u => u.Email == dto.Email))
                 throw new ConflictException("Email already exists.");
 
-            // Role is always Creator — Admin is seeded directly in the database.
-            // The Role field in RegisterDto is intentionally ignored here to prevent
-            // privilege escalation through the public registration endpoint.
+
             using var hmac = new HMACSHA512();
             var user = new User
             {
@@ -74,11 +72,7 @@ namespace FeedBackApp.Services
             if (!computedHash.SequenceEqual(user.PasswordHash))
                 throw new BadRequestException("Invalid username or password.");
 
-            // BUG-11 FIX: original code returned distinct messages for deleted/inactive accounts
-            // AFTER a successful password check. An attacker who knew a valid username could
-            // submit the correct password and use the different error message to confirm the
-            // credentials are valid — a timing/message-based enumeration attack.
-            // Fix: return the same generic message for all failure reasons.
+            
             if (user.IsDeleted || !user.IsActive)
                 throw new BadRequestException("Invalid username or password.");
 

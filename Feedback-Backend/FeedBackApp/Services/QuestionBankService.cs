@@ -16,19 +16,22 @@ namespace FeedBackApp.Services
         private readonly IRepository<Survey>             _surveyRepo;
         private readonly IRepository<Question>           _questionRepo;
         private readonly IAuditService                   _audit;
+        private readonly ILogger<QuestionBankService>    _logger;
 
         public QuestionBankService(
             IRepository<BankQuestion>       bankRepo,
             IRepository<BankQuestionOption> bankOptionRepo,
             IRepository<Survey>             surveyRepo,
             IRepository<Question>           questionRepo,
-            IAuditService                   audit)
+            IAuditService                   audit,
+            ILogger<QuestionBankService>    logger)
         {
             _bankRepo       = bankRepo;
             _bankOptionRepo = bankOptionRepo;
             _surveyRepo     = surveyRepo;
             _questionRepo   = questionRepo;
             _audit          = audit;
+            _logger         = logger;
         }
 
         // ── CRUD ──────────────────────────────────────────────────────────────
@@ -307,6 +310,8 @@ namespace FeedBackApp.Services
 
         public async Task AutoSaveQuestionsAsync(IEnumerable<Question> questions, int userId)
         {
+            try
+            {
             var questionList = questions.ToList();
             if (questionList.Count == 0) return;
 
@@ -334,7 +339,7 @@ namespace FeedBackApp.Services
             foreach (var item in incoming)
             {
                 if (existingSet.Contains(item.Hash)) continue;
-                if (!seen.Add(item.Hash)) continue; // skip duplicates within the same batch
+                if (!seen.Add(item.Hash)) continue;
 
                 var bq = new BankQuestion
                 {
@@ -355,9 +360,15 @@ namespace FeedBackApp.Services
                 };
 
                 await _bankRepo.AddAsync(bq);
+                _logger.LogInformation("[QuestionBank] Auto-saved question '{Text}' for user {UserId}", item.Question.Text, userId);
             }
 
             await _bankRepo.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "[QuestionBank] AutoSave failed for user {UserId}", userId);
+            }
         }
 
         /// <summary>

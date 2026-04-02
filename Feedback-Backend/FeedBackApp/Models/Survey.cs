@@ -19,10 +19,7 @@ namespace FeedBackApp.Models
         [Required]
         public Guid PublicToken { get; set; } = Guid.NewGuid();
 
-        /// <summary>
-        /// Single source of truth for survey lifecycle.
-        /// Inactive = editable, Active = live (accepting responses), Closed = permanently locked.
-        /// </summary>
+      
         [Required]
         public SurveyState State { get; set; } = SurveyState.Inactive;
 

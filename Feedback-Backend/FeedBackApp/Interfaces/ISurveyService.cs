@@ -12,5 +12,6 @@ namespace FeedBackApp.Interfaces
         Task                                 DeleteAsync(int surveyId, int userId, string role);
         Task<PublicSurveyDto>                GetByPublicTokenAsync(Guid publicToken);
         Task                                 CloneQuestionsAsync(int sourceSurveyId, int targetSurveyId, int userId, string role);
+        Task<SurveyResponseDto>              UpdateScheduleAsync(int surveyId, UpdateSurveyScheduleDto dto, int userId, string role);
     }
 }

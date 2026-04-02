@@ -16,12 +16,12 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
             </svg>
             <div>
-              <p class="text-sm font-semibold" style="color:#9a3412">Survey is {{ survey()?.state }} — read only</p>
+              <p class="text-sm font-semibold" style="color:#9a3412">Survey is {{ survey()?.state }} — settings locked</p>
               <p class="text-xs mt-0.5" style="color:#c2410c">
                 @if (survey()?.state === 'Active') {
-                  This survey is live. Pause it first to edit its settings.
+                  Title, description and anonymous setting are locked. You can still update the schedule below.
                 } @else {
-                  Closed surveys cannot be edited. Reopen to make it editable again.
+                  Closed survey. You can still update the schedule below.
                 }
               </p>
             </div>
@@ -78,16 +78,46 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label for="survey-start-date" class="label">Start Date</label>
-                <input id="survey-start-date" name="startDate" type="datetime-local" formControlName="startDate" class="input"
-                  [attr.readonly]="!isDraft() && isEdit() ? true : null" />
+                <div class="flex items-center justify-between mb-1">
+                  <label for="survey-start-date" class="label mb-0">Start Date</label>
+                  <button type="button" (click)="setNow('startDate')"
+                    class="text-xs text-brand-600 hover:text-brand-800 font-medium">
+                    Now
+                  </button>
+                </div>
+                <input id="survey-start-date" name="startDate" type="datetime-local"
+                  formControlName="startDate" class="input"
+                  [min]="minDateTime()" />
               </div>
               <div>
-                <label for="survey-end-date" class="label">End Date</label>
-                <input id="survey-end-date" name="endDate" type="datetime-local" formControlName="endDate" class="input"
-                  [attr.readonly]="!isDraft() && isEdit() ? true : null" />
+                <div class="flex items-center justify-between mb-1">
+                  <label for="survey-end-date" class="label mb-0">End Date</label>
+                  <button type="button" (click)="setNow('endDate')"
+                    class="text-xs text-brand-600 hover:text-brand-800 font-medium">
+                    Now
+                  </button>
+                </div>
+                <input id="survey-end-date" name="endDate" type="datetime-local"
+                  formControlName="endDate" class="input"
+                  [min]="minEndDateTime()" />
               </div>
             </div>
+
+            <!-- Schedule save button for Active/Closed surveys -->
+            @if (canEditSchedule()) {
+              <div class="flex items-center gap-3 p-4 rounded-xl" style="background:#f0fdf4; border:1px solid #bbf7d0">
+                <svg class="w-4 h-4 flex-shrink-0" style="color:#16a34a" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <p class="text-sm flex-1" style="color:#15803d">You can update the survey schedule even while it's {{ survey()?.state }}.</p>
+                <button type="button" class="btn-primary btn-sm" [disabled]="scheduleLoading()" (click)="onUpdateSchedule()">
+                  @if (scheduleLoading()) {
+                    <span class="inline-block w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                  }
+                  Save Schedule
+                </button>
+              </div>
+            }
 
             <div class="flex items-center gap-3 p-4 rounded-xl"
               [class]="!isDraft() && isEdit() ? 'bg-surface-100 opacity-60' : 'bg-surface-50'">

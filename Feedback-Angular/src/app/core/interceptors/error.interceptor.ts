@@ -26,6 +26,12 @@ export const errorInterceptor: HttpInterceptorFn = (
       if (error.status === 0) {
         userMessage = 'Unable to connect to server. Check your connection.';
       } else if (error.status === 400) {
+        // These are semantic survey state codes handled by the public-survey component itself.
+        // Skip the global toast so the component can show its own friendly message.
+        const surveyStateCodes = ['SURVEY_PAUSED','SURVEY_CLOSED','SURVEY_NOT_STARTED','SURVEY_EXPIRED','SURVEY_NO_QUESTIONS'];
+        if (surveyStateCodes.includes(backendMessage)) {
+          return throwError(() => error);
+        }
         userMessage = backendMessage || 'Invalid input. Please check your data.';
       } else if (error.status === 401) {
         if (auth.isAuthenticated()) {

@@ -32,9 +32,15 @@ export class SurveyDetailComponent implements OnInit {
     endDate: ['']
   });
 
+  readonly scheduleLoading = signal(false);
+
   isDraft(): boolean {
-    // New survey is always editable; existing survey only if Inactive
     return !this.isEdit() || this.survey()?.state === 'Inactive';
+  }
+
+  canEditSchedule(): boolean {
+    // Dates are editable on any state — only title/desc/anonymous require Inactive
+    return this.isEdit() && !this.isDraft();
   }
 
   ngOnInit(): void {
@@ -57,9 +63,12 @@ export class SurveyDetailComponent implements OnInit {
           startDate: s.startDate ? this.toLocalDatetime(s.startDate) : '',
           endDate: s.endDate ? this.toLocalDatetime(s.endDate) : ''
         });
-        // Disable form controls for non-Inactive surveys
+        // Only lock title/description/allowAnonymous for non-Inactive surveys.
+        // startDate and endDate remain editable via the schedule endpoint.
         if (s.state !== 'Inactive') {
-          this.form.disable();
+          this.form.get('title')?.disable();
+          this.form.get('description')?.disable();
+          this.form.get('allowAnonymous')?.disable();
         }
         this.loadingData.set(false);
       },
@@ -71,12 +80,26 @@ export class SurveyDetailComponent implements OnInit {
   }
 
   private toLocalDatetime(iso: string): string {
-    // UX-03 FIX: d.toISOString() always returns UTC, so a UTC date displayed in a
-    // datetime-local input appeared shifted for users outside UTC.
-    // Fix: subtract the timezone offset so the value shown matches the user's local time.
     const d = new Date(iso);
     const offsetMs = d.getTimezoneOffset() * 60_000;
     return new Date(d.getTime() - offsetMs).toISOString().slice(0, 16);
+  }
+
+  // Returns current datetime in local timezone as "YYYY-MM-DDTHH:mm" for the min attribute
+  minDateTime(): string {
+    return this.toLocalDatetime(new Date().toISOString());
+  }
+
+  // End date min = start date if set, otherwise now
+  minEndDateTime(): string {
+    const start = this.form.get('startDate')?.value;
+    return start ? start : this.minDateTime();
+  }
+
+  // Sets the given field to now + 1 minute (avoids "cannot be in the past" edge case)
+  setNow(field: 'startDate' | 'endDate'): void {
+    const nowPlus1 = new Date(Date.now() + 60_000);
+    this.form.get(field)?.setValue(this.toLocalDatetime(nowPlus1.toISOString()));
   }
 
   isInvalid(field: string): boolean {
@@ -84,8 +107,13 @@ export class SurveyDetailComponent implements OnInit {
     return !!(ctrl?.invalid && ctrl?.touched);
   }
 
+  // Converts a datetime-local string (local time, no TZ) to a proper UTC ISO string
+  private toUtcIso(localDatetime: string): string {
+    // datetime-local gives "YYYY-MM-DDTHH:mm" in local time — new Date() parses it as local
+    return new Date(localDatetime).toISOString();
+  }
+
   onSubmit(): void {
-    // Guard: never submit for non-Draft surveys
     if (this.isEdit() && !this.isDraft()) return;
 
     if (this.form.invalid) {
@@ -93,12 +121,23 @@ export class SurveyDetailComponent implements OnInit {
       return;
     }
     const { title, description, allowAnonymous, startDate, endDate } = this.form.value;
+
+    if (startDate && endDate && new Date(endDate) <= new Date(startDate)) {
+      this.toast.error('End date must be after start date.');
+      return;
+    }
+
+    if (startDate && new Date(startDate) < new Date()) {
+      this.toast.error('Start date cannot be in the past.');
+      return;
+    }
+
     const payload = {
       title: title!,
       description: description ?? '',
       allowAnonymous: !!allowAnonymous,
-      startDate: startDate || undefined,
-      endDate: endDate || undefined
+      startDate: startDate ? this.toUtcIso(startDate) : undefined,
+      endDate:   endDate   ? this.toUtcIso(endDate)   : undefined
     };
 
     this.loading.set(true);
@@ -117,6 +156,34 @@ export class SurveyDetailComponent implements OnInit {
       },
       error: () => this.loading.set(false),
       complete: () => this.loading.set(false)
+    });
+  }
+
+  onUpdateSchedule(): void {
+    const { startDate, endDate } = this.form.value;
+
+    if (startDate && endDate && new Date(endDate) <= new Date(startDate)) {
+      this.toast.error('End date must be after start date.');
+      return;
+    }
+
+    if (startDate && new Date(startDate) < new Date()) {
+      this.toast.error('Start date cannot be in the past.');
+      return;
+    }
+
+    this.scheduleLoading.set(true);
+    this.surveyService.updateSchedule(
+      Number(this.id()),
+      startDate ? this.toUtcIso(startDate) : undefined,
+      endDate   ? this.toUtcIso(endDate)   : undefined
+    ).subscribe({
+      next: (s) => {
+        this.survey.set(s);
+        this.toast.success('Survey schedule updated.');
+        this.scheduleLoading.set(false);
+      },
+      error: () => this.scheduleLoading.set(false)
     });
   }
 }

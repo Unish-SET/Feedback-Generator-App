@@ -73,6 +73,14 @@ namespace FeedBackApp.Services
             if (survey.State != SurveyState.Inactive)
                 throw new BadRequestException("Only Inactive surveys can be edited. Pause an Active survey first.");
 
+            if (dto.StartDate.HasValue && dto.EndDate.HasValue &&
+                dto.EndDate.Value <= dto.StartDate.Value)
+                throw new BadRequestException("End date must be after start date.");
+
+            if (dto.StartDate.HasValue &&
+                dto.StartDate.Value.ToUniversalTime() < DateTime.UtcNow)
+                throw new BadRequestException("Start date cannot be in the past.");
+
             survey.Title          = dto.Title;
             survey.Description    = dto.Description;
             survey.StartDate      = ToUtc(dto.StartDate);
@@ -320,6 +328,29 @@ namespace FeedBackApp.Services
             }
 
             await _questionRepo.SaveChangesAsync();
+        }
+
+        // ── Update Schedule (dates only — works on any state) ─────────────────
+        public async Task<SurveyResponseDto> UpdateScheduleAsync(int surveyId, UpdateSurveyScheduleDto dto, int userId, string role)
+        {
+            var survey = await GetSurveyWithAccessCheck(surveyId, userId, role);
+
+            if (dto.StartDate.HasValue && dto.EndDate.HasValue &&
+                dto.EndDate.Value <= dto.StartDate.Value)
+                throw new BadRequestException("End date must be after start date.");
+
+            if (dto.StartDate.HasValue &&
+                dto.StartDate.Value.ToUniversalTime() < DateTime.UtcNow)
+                throw new BadRequestException("Start date cannot be in the past.");
+
+            survey.StartDate = ToUtc(dto.StartDate);
+            survey.EndDate   = ToUtc(dto.EndDate);
+            survey.UpdatedAt = DateTime.UtcNow;
+
+            _surveyRepo.Update(survey);
+            await _surveyRepo.SaveChangesAsync();
+            _ = _audit.LogAsync("UpdateSchedule", "Survey", surveyId.ToString(), userId);
+            return MapToResponseDto(survey);
         }
 
         // ── Private Helpers ───────────────────────────────────────────────────

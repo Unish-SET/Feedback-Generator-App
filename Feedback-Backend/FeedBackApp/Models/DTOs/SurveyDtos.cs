@@ -8,6 +8,12 @@ namespace FeedBackApp.Models.DTOs
         public string State { get; set; } = string.Empty;
     }
 
+    public class UpdateSurveyScheduleDto
+    {
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate   { get; set; }
+    }
+
     public class CreateSurveyDto
     {
         [Required]

@@ -63,6 +63,17 @@ namespace FeedBackApp.Controllers
             return Ok(new { success = true, data = result });
         }
 
+        /// <summary>
+        /// Update survey schedule (startDate / endDate) regardless of state.
+        /// Works on Inactive, Active, and Closed surveys.
+        /// </summary>
+        [HttpPatch("{id}/schedule")]
+        public async Task<IActionResult> UpdateSchedule(int id, [FromBody] UpdateSurveyScheduleDto dto)
+        {
+            var result = await _surveyService.UpdateScheduleAsync(id, dto, GetUserId(), GetUserRole());
+            return Ok(new { success = true, data = result });
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

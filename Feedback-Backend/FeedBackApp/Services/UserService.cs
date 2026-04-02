@@ -27,7 +27,7 @@ namespace FeedBackApp.Services
 
         public async Task<PaginatedResult<UserResponseDto>> GetAllUsersAsync(UserFilterParams filter)
         {
-            // Validate date range before hitting the DB
+            
             if (filter.FromDate.HasValue && filter.ToDate.HasValue &&
                 filter.FromDate.Value > filter.ToDate.Value)
                 throw new BadRequestException("FromDate cannot be later than ToDate.");
@@ -43,7 +43,7 @@ namespace FeedBackApp.Services
                 Enum.TryParse<UserRole>(filter.Role, true, out var roleEnum))
                 query = query.Where(u => u.Role == roleEnum);
 
-            // Date range — normalize to UTC start/end of day so partial dates work intuitively
+        
             if (filter.FromDate.HasValue)
             {
                 var from = DateTime.SpecifyKind(filter.FromDate.Value.Date, DateTimeKind.Utc);
@@ -52,7 +52,7 @@ namespace FeedBackApp.Services
 
             if (filter.ToDate.HasValue)
             {
-                // End of day: include everything up to 23:59:59.999 on ToDate
+                
                 var to = DateTime.SpecifyKind(filter.ToDate.Value.Date.AddDays(1).AddTicks(-1), DateTimeKind.Utc);
                 query = query.Where(u => u.CreatedAt <= to);
             }
@@ -160,9 +160,7 @@ namespace FeedBackApp.Services
             if (user.IsDeleted)
                 throw new BadRequestException("User is already deleted.");
 
-            // Prevent deleting a user who owns active surveys.
-            // Deleting them would leave live surveys with no accessible owner —
-            // creators can no longer manage them and responses keep coming in.
+           
             var hasActiveSurveys = await _surveyRepo.GetQueryable()
                 .AnyAsync(s => s.CreatedBy == id && s.State == SurveyState.Active);
 
@@ -184,7 +182,7 @@ namespace FeedBackApp.Services
             pageNumber = pageNumber <= 0 ? 1 : pageNumber;
             pageSize   = Math.Min(pageSize <= 0 ? 20 : pageSize, 50);
 
-            // IgnoreQueryFilters to include soft-deleted surveys in admin view
+          
             var query = _surveyRepo.GetQueryable()
                 .IgnoreQueryFilters()
                 .Where(s => s.CreatedBy == userId);

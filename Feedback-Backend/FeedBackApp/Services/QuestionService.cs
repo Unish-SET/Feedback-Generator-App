@@ -58,7 +58,7 @@ namespace FeedBackApp.Services
 
             var result = await MapToResponseDto(question.Id);
 
-            _ = _bankService.AutoSaveQuestionsAsync(new[] { question }, userId);
+            await _bankService.AutoSaveQuestionsAsync(new[] { question }, userId);
             _ = _audit.LogAsync("Create", "Question", question.Id.ToString(), userId);
 
             return result;
@@ -107,7 +107,7 @@ namespace FeedBackApp.Services
 
             var result = await MapToResponseDto(question.Id);
 
-            _ = _bankService.AutoSaveQuestionsAsync(new[] { question }, userId);
+            await _bankService.AutoSaveQuestionsAsync(new[] { question }, userId);
             _ = _audit.LogAsync("Update", "Question", questionId.ToString(), userId);
 
             return result;

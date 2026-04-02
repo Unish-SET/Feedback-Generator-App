@@ -68,6 +68,12 @@ export class SurveyService {
       .pipe(map(r => r.data));
   }
 
+  // PATCH /api/survey/{id}/schedule — update start/end dates on any state
+  updateSchedule(id: number, startDate?: string, endDate?: string): Observable<Survey> {
+    return this.http.patch<ApiResponse<Survey>>(`${this.base}/${id}/schedule`, { startDate, endDate })
+      .pipe(map(r => r.data));
+  }
+
   // POST /api/survey/{sourceId}/clone-questions/{targetId}
   cloneQuestions(sourceId: number, targetId: number): Observable<void> {
     return this.http.post<void>(`${this.base}/${sourceId}/clone-questions/${targetId}`, {});
