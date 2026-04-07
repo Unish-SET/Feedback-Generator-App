@@ -5,6 +5,8 @@ namespace FeedBackApp.Context
 {
     public class FeedBackDbContext : DbContext
     {
+
+
         public FeedBackDbContext(DbContextOptions<FeedBackDbContext> options) : base(options) { }
 
         public DbSet<User>               Users               => Set<User>();
