@@ -16,6 +16,8 @@ namespace FeedBackApp.Context
         public DbSet<AuditLog>           AuditLogs           => Set<AuditLog>();
         public DbSet<BankQuestion>       BankQuestions       => Set<BankQuestion>();
         public DbSet<BankQuestionOption> BankQuestionOptions => Set<BankQuestionOption>();
+        public DbSet<SurveyInvite>       SurveyInvites       => Set<SurveyInvite>();
+        public DbSet<SurveyOtp>          SurveyOtps          => Set<SurveyOtp>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -116,6 +118,25 @@ namespace FeedBackApp.Context
             modelBuilder.Entity<BankQuestion>(entity =>
             {
                 entity.Property(bq => bq.Type).HasConversion<int>();
+            });
+
+            // ── SurveyInvite ──
+            modelBuilder.Entity<SurveyInvite>(entity =>
+            {
+                entity.HasIndex(i => new { i.SurveyId, i.Email }).IsUnique();
+                entity.HasIndex(i => i.InviteToken).IsUnique();
+                entity.HasOne(i => i.Survey).WithMany()
+                      .HasForeignKey(i => i.SurveyId).OnDelete(DeleteBehavior.Cascade);
+                entity.HasQueryFilter(i => !i.Survey.IsDeleted);
+            });
+
+            // ── SurveyOtp ──
+            modelBuilder.Entity<SurveyOtp>(entity =>
+            {
+                entity.HasIndex(o => new { o.SurveyId, o.Email, o.IsUsed });
+                entity.HasOne(o => o.Survey).WithMany()
+                      .HasForeignKey(o => o.SurveyId).OnDelete(DeleteBehavior.Cascade);
+                entity.HasQueryFilter(o => !o.Survey.IsDeleted);
             });
         }
     }

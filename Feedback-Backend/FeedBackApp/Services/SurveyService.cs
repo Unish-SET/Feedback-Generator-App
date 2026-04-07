@@ -265,6 +265,7 @@ namespace FeedBackApp.Services
                 Title          = survey.Title,
                 Description    = survey.Description,
                 AllowAnonymous = survey.AllowAnonymous,
+                IsInviteOnly   = survey.IsInviteOnly,
                 Questions      = survey.Questions
                     .OrderBy(q => q.Order)
                     .Select(q => new PublicQuestionDto
@@ -353,6 +354,18 @@ namespace FeedBackApp.Services
             return MapToResponseDto(survey);
         }
 
+        // ── Set Invite-Only ───────────────────────────────────────────────────
+        public async Task<SurveyResponseDto> SetInviteOnlyAsync(int surveyId, SetInviteOnlyDto dto, int userId, string role)
+        {
+            var survey = await GetSurveyWithAccessCheck(surveyId, userId, role);
+            survey.IsInviteOnly = dto.IsInviteOnly;
+            survey.UpdatedAt    = DateTime.UtcNow;
+            _surveyRepo.Update(survey);
+            await _surveyRepo.SaveChangesAsync();
+            _ = _audit.LogAsync("SetInviteOnly", "Survey", surveyId.ToString(), userId);
+            return MapToResponseDto(survey);
+        }
+
         // ── Private Helpers ───────────────────────────────────────────────────
         private async Task ValidateCanActivate(int surveyId)
         {
@@ -399,6 +412,7 @@ namespace FeedBackApp.Services
                 StartDate      = survey.StartDate,
                 EndDate        = survey.EndDate,
                 AllowAnonymous = survey.AllowAnonymous,
+                IsInviteOnly   = survey.IsInviteOnly,
                 CreatedBy      = survey.CreatedBy,
                 CreatorName    = survey.Creator?.Username ?? "Unknown",
                 CreatedAt      = survey.CreatedAt,

@@ -412,6 +412,9 @@ builder.Services.AddScoped<IExcelService, ExcelService>();
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<IAdminSurveyService, AdminSurveyService>();
 builder.Services.AddScoped<IQuestionImportService, QuestionImportService>();
+builder.Services.AddScoped<IEmailService,   EmailService>();
+builder.Services.AddScoped<IOtpService,     OtpService>();
+builder.Services.AddScoped<IInviteService,  InviteService>();
 
 // Memory Cache
 //builder.Services.AddMemoryCache();

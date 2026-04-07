@@ -28,6 +28,8 @@ namespace FeedBackApp.Models
 
         public bool AllowAnonymous { get; set; } = false;
 
+        public bool IsInviteOnly { get; set; } = false;
+
         [Required]
         public int CreatedBy { get; set; }
 

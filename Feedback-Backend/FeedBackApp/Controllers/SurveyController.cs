@@ -4,7 +4,6 @@ using FeedBackApp.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-
 namespace FeedBackApp.Controllers
 {
     [Route("api/[controller]")]
@@ -12,11 +11,13 @@ namespace FeedBackApp.Controllers
     [Authorize(Roles = "Admin,Creator")]
     public class SurveyController : ControllerBase
     {
-        private readonly ISurveyService _surveyService;
+        private readonly ISurveyService  _surveyService;
+        private readonly IInviteService  _inviteService;
 
-        public SurveyController(ISurveyService surveyService)
+        public SurveyController(ISurveyService surveyService, IInviteService inviteService)
         {
-            _surveyService = surveyService;
+            _surveyService  = surveyService;
+            _inviteService  = inviteService;
         }
 
         private int    GetUserId()   => int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : 0;
@@ -86,6 +87,27 @@ namespace FeedBackApp.Controllers
         {
             await _surveyService.CloneQuestionsAsync(sourceId, targetId, GetUserId(), GetUserRole());
             return Ok(new { success = true, message = "Questions cloned successfully." });
+        }
+
+        [HttpPost("{id}/invites")]
+        public async Task<IActionResult> SendInvites(int id, [FromBody] SendInvitesDto dto)
+        {
+            await _inviteService.SendInvitesAsync(id, dto, GetUserId(), GetUserRole());
+            return Ok(new { success = true, message = "Invites sent." });
+        }
+
+        [HttpGet("{id}/invites")]
+        public async Task<IActionResult> GetInvites(int id)
+        {
+            var result = await _inviteService.GetInvitesAsync(id, GetUserId(), GetUserRole());
+            return Ok(new { success = true, data = result });
+        }
+
+        [HttpPatch("{id}/invite-only")]
+        public async Task<IActionResult> SetInviteOnly(int id, [FromBody] SetInviteOnlyDto dto)
+        {
+            var result = await _surveyService.SetInviteOnlyAsync(id, dto, GetUserId(), GetUserRole());
+            return Ok(new { success = true, data = result });
         }
     }
 }
