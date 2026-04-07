@@ -28,8 +28,12 @@ export class RegisterComponent {
 
   readonly form = this.fb.group({
     username: ['', [Validators.required, Validators.minLength(3)]],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(8)]]
+    email: ['', [
+      Validators.required, 
+      Validators.email,
+      Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)  // ← ADD THIS LINE
+    ]],
+    password: ['', [Validators.required, Validators.minLength(6)]]  // ← CHANGE 8 to 6 (backend requirement)
   });
 
   isInvalid(field: string): boolean {
@@ -38,7 +42,11 @@ export class RegisterComponent {
   }
 
   onSubmit(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) { 
+      this.form.markAllAsTouched(); 
+      this.toast.error('Please fix validation errors');  // ← ADD THIS
+      return; 
+    }
     this.loading.set(true);
     const { username, email, password } = this.form.value;
     this.auth.register({ username: username!, email: email!, password: password! }).subscribe({
@@ -49,6 +57,7 @@ export class RegisterComponent {
       },
       error: (err) => {
         if (err.status === 409) { this.toast.error('Username or email is already taken.'); }
+        else { this.toast.error(err.error?.message || 'Registration failed'); }  // ← ADD THIS
         this.loading.set(false);
       },
       complete: () => this.loading.set(false)

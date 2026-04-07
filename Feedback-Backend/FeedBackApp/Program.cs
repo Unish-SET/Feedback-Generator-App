@@ -414,7 +414,7 @@ builder.Services.AddScoped<IAdminSurveyService, AdminSurveyService>();
 builder.Services.AddScoped<IQuestionImportService, QuestionImportService>();
 
 // Memory Cache
-builder.Services.AddMemoryCache();
+//builder.Services.AddMemoryCache();
 
 // JWT Authentication
 string jwtKey = builder.Configuration["JwtSettings:Key"]

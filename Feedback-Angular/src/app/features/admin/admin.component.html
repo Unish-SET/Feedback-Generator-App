@@ -142,13 +142,13 @@
                     <td class="hidden sm:table-cell text-surface-500 text-sm">{{ user.createdAt | date:'MMM d, yyyy' }}</td>
                     <td>
                       <div class="flex items-center gap-1.5 flex-wrap">
-                        <button (click)="openUserDetail(user)" class="btn-secondary btn-sm" title="View detail">
+                        <!-- <button (click)="openUserDetail(user)" class="btn-secondary btn-sm" title="View detail">
                           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                           </svg>
                           View
-                        </button>
+                        </button> -->
                         @if (user.id !== auth.user()?.userId) {
                           <button (click)="toggleStatus(user)" [disabled]="statusUserId() === user.id"
                             class="btn btn-sm"
@@ -358,11 +358,11 @@
                     <td class="text-surface-700 font-medium">{{ log.entityName }}</td>
                     <td class="hidden md:table-cell text-surface-400 text-xs">{{ log.entityId ?? '—' }}</td>
                     <td class="hidden lg:table-cell text-surface-400 text-xs">{{ log.ipAddress ?? '—' }}</td>
-                    <td>
+                    <!-- <td>
                       @if (log.changes) {
                         <button (click)="viewChanges(log)" class="text-xs text-brand-600 hover:text-brand-800 underline underline-offset-2">View</button>
                       } @else { <span class="text-surface-300 text-xs">—</span> }
-                    </td>
+                    </td> -->
                   </tr>
                 }
               </tbody>
