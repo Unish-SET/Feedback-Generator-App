@@ -55,6 +55,7 @@ namespace FeedBackApp.Models.DTOs
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public bool AllowAnonymous { get; set; }
+        public bool IsInviteOnly { get; set; }
         public int CreatedBy { get; set; }
         public string CreatorName { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
@@ -78,6 +79,7 @@ namespace FeedBackApp.Models.DTOs
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public bool AllowAnonymous { get; set; }
+        public bool IsInviteOnly { get; set; }
         public List<PublicQuestionDto> Questions { get; set; } = new();
     }
 

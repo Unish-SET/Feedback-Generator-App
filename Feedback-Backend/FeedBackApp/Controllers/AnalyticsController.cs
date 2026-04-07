@@ -12,8 +12,13 @@ namespace FeedBackApp.Controllers
     public class AnalyticsController : ControllerBase
     {
         private readonly IAnalyticsService _analyticsService;
+        private readonly IEmailService     _emailService;
 
-        public AnalyticsController(IAnalyticsService analyticsService) => _analyticsService = analyticsService;
+        public AnalyticsController(IAnalyticsService analyticsService, IEmailService emailService)
+        {
+            _analyticsService = analyticsService;
+            _emailService     = emailService;
+        }
 
         private int    GetUserId()   => int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : 0;
         private string GetUserRole() => User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
@@ -23,6 +28,14 @@ namespace FeedBackApp.Controllers
         {
             var result = await _analyticsService.GetAnalyticsAsync(surveyId, GetUserId(), GetUserRole(), filter);
             return Ok(new { success = true, data = result });
+        }
+
+        [HttpPost("send-report")]
+        public async Task<IActionResult> SendReport(int surveyId, [FromBody] SendAnalyticsReportDto dto)
+        {
+            var (html, title) = await _analyticsService.BuildReportHtmlAsync(surveyId, GetUserId(), GetUserRole());
+            await _emailService.SendAnalyticsReportAsync(dto.RecipientEmail, html, title);
+            return Ok(new { success = true, message = "Report sent." });
         }
     }
 }

@@ -28,4 +28,11 @@ export class AnalyticsService {
       { responseType: 'blob' }
     );
   }
+
+  sendReport(surveyId: number, recipientEmail: string): Observable<void> {
+    return this.http.post<void>(
+      `${environment.apiUrl}/surveys/${surveyId}/analytics/send-report`,
+      { recipientEmail }
+    );
+  }
 }

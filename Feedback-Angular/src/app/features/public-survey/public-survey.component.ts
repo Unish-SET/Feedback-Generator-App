@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SurveyService } from '../../core/services/survey.service';
 import { ResponseService } from '../../core/services/response.service';
 import { AuthService } from '../../core/services/auth.service';
+import { OtpService } from '../../core/services/otp.service';
 import { PublicSurvey, PublicQuestion, SubmitResponseRequest } from '../../shared/models';
 
 @Component({
@@ -20,6 +21,7 @@ export class PublicSurveyComponent implements OnInit {
   private readonly surveyService   = inject(SurveyService);
   private readonly responseService = inject(ResponseService);
   private readonly authService     = inject(AuthService);
+  private readonly otpService      = inject(OtpService);
   private readonly fb              = inject(FormBuilder);
 
   readonly loading          = signal(true);
@@ -31,6 +33,18 @@ export class PublicSurveyComponent implements OnInit {
   readonly survey           = signal<PublicSurvey | null>(null);
   readonly currentQuestion  = signal(0);
   readonly showErrors       = signal(false);
+
+  // ── OTP gate ──────────────────────────────────────────────────────────────
+  readonly otpStep       = signal<'email' | 'otp' | 'verified'>('email');
+  readonly otpEmail      = signal('');
+  readonly otpCode       = signal('');
+  readonly otpSending    = signal(false);
+  readonly otpVerifying  = signal(false);
+  readonly otpError      = signal('');
+  readonly otpEmailError = signal('');
+  readonly otpCodeError  = signal('');
+  readonly otpAttempts   = signal(0);
+  readonly isInviteOnly  = signal(false);
 
   readonly responseForm: FormGroup = this.fb.group({});
   private checkboxAnswers = new Map<number, Set<number>>();
@@ -64,12 +78,22 @@ export class PublicSurveyComponent implements OnInit {
           this.loading.set(false);
           return;
         }
-        if (!s.allowAnonymous && !this.authService.isAuthenticated()) {
+
+        // Handle invite-only OTP gate
+        if (s.isInviteOnly) {
+          this.isInviteOnly.set(true);
+          const existing = sessionStorage.getItem(`otp_session_${this.publicToken}`);
+          if (existing) {
+            this.otpStep.set('verified');
+          }
+          // Fall through — HTML will show OTP gate if not verified
+        } else if (!s.allowAnonymous && !this.authService.isAuthenticated()) {
           this.router.navigate(['/auth/login'], {
             queryParams: { returnUrl: this.router.url }
           });
           return;
         }
+
         this.survey.set(s);
         this.buildForm(s);
         this.loading.set(false);
@@ -87,6 +111,62 @@ export class PublicSurveyComponent implements OnInit {
         else                                    this.errorMessage.set('Unable to load survey.');
       }
     });
+  }
+
+  private validateEmail(email: string): string {
+    if (!email.trim()) return 'Email is required.';
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!re.test(email.trim())) return 'Enter a valid email address.';
+    return '';
+  }
+
+  sendOtp(): void {
+    const err = this.validateEmail(this.otpEmail());
+    if (err) { this.otpEmailError.set(err); return; }
+    this.otpEmailError.set('');
+    this.otpError.set('');
+    this.otpSending.set(true);
+    this.otpService.sendOtp(this.otpEmail().trim(), this.publicToken).subscribe({
+      next: () => { this.otpStep.set('otp'); this.otpSending.set(false); this.otpAttempts.set(0); },
+      error: (e) => { this.otpError.set(e.error?.message ?? 'Failed to send OTP. Try again.'); this.otpSending.set(false); }
+    });
+  }
+
+  verifyOtp(): void {
+    const code = this.otpCode().trim();
+    if (!code)                 { this.otpCodeError.set('Please enter the OTP code.'); return; }
+    if (code.length !== 6)     { this.otpCodeError.set('OTP must be exactly 6 digits.'); return; }
+    if (!/^\d{6}$/.test(code)) { this.otpCodeError.set('OTP must contain numbers only.'); return; }
+    this.otpCodeError.set('');
+    this.otpError.set('');
+    this.otpVerifying.set(true);
+    this.otpService.verifyOtp(this.otpEmail().trim(), this.publicToken, code).subscribe({
+      next: (res) => {
+        sessionStorage.setItem(`otp_session_${this.publicToken}`, res.sessionToken);
+        this.otpStep.set('verified');
+        this.otpVerifying.set(false);
+      },
+      error: (e) => {
+        this.otpAttempts.update(n => n + 1);
+        if (this.otpAttempts() >= 5) {
+          this.otpError.set('Too many failed attempts. Please request a new OTP.');
+          this.otpStep.set('email');
+          this.otpCode.set('');
+          this.otpAttempts.set(0);
+        } else {
+          this.otpError.set(e.error?.message ?? 'Invalid OTP.');
+        }
+        this.otpVerifying.set(false);
+      }
+    });
+  }
+
+  onOtpInput(event: Event): void {
+    const input  = event.target as HTMLInputElement;
+    const digits = input.value.replace(/\D/g, '').slice(0, 6);
+    input.value  = digits;
+    this.otpCode.set(digits);
+    if (this.otpCodeError()) this.otpCodeError.set('');
   }
 
   private buildForm(s: PublicSurvey): void {
