@@ -74,6 +74,7 @@ export interface Survey {
   startDate?: string;
   endDate?: string;
   allowAnonymous: boolean;
+  isInviteOnly: boolean;
   createdBy: number;
   creatorName: string;
   createdAt: string;
@@ -139,6 +140,7 @@ export interface PublicSurvey {
   title: string;
   description: string;
   allowAnonymous: boolean;
+  isInviteOnly: boolean;
   questions: PublicQuestion[];
 }
 
@@ -341,3 +343,17 @@ export interface QuestionImportResult {
   errors: string[];
 }
 
+
+// ─── Invites ───────────────────────────────────────────────────────────────
+export interface SurveyInviteItem {
+  id: number;
+  email: string;
+  isUsed: boolean;
+  sentAt: string;
+}
+
+// ─── OTP ───────────────────────────────────────────────────────────────────
+export interface OtpVerifiedResponse {
+  sessionToken: string;
+  expiresAt: string;
+}

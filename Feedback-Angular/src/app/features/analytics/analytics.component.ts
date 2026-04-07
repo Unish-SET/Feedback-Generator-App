@@ -5,6 +5,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Subject, EMPTY } from 'rxjs';
 import { catchError, switchMap, startWith, takeUntil } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -21,7 +22,7 @@ Chart.register(...registerables);
   selector: 'app-analytics',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterLink, ReactiveFormsModule, EmptyStateComponent],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule, FormsModule, EmptyStateComponent],
   templateUrl: './analytics.component.html'
 })
 export class AnalyticsComponent implements OnInit, OnDestroy {
@@ -48,6 +49,12 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
   readonly exporting = signal(false);
   readonly analytics = signal<SurveyAnalytics | null>(null);
   readonly survey    = signal<Survey | null>(null);
+
+  // ── Send report ───────────────────────────────────────────────────────────
+  reportEmail      = '';
+  reportEmailError = '';
+  sendingReport    = false;
+  reportSent       = false;
 
   @ViewChild('lineChart') lineChartRef!: ElementRef<HTMLCanvasElement>;
 
@@ -196,6 +203,20 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
     this.analyticsService.exportExcel(Number(this.id())).subscribe({
       next: (blob) => { this.downloadBlob(blob, 'survey-responses.xlsx'); this.exporting.set(false); },
       error: () => this.exporting.set(false)
+    });
+  }
+
+  sendReport(): void {
+    const email = this.reportEmail.trim();
+    const re    = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email)        { this.reportEmailError = 'Email is required.'; return; }
+    if (!re.test(email)) { this.reportEmailError = 'Enter a valid email address.'; return; }
+    this.reportEmailError = '';
+    this.reportSent       = false;
+    this.sendingReport    = true;
+    this.analyticsService.sendReport(Number(this.id()), email).subscribe({
+      next: ()  => { this.reportSent = true;  this.sendingReport = false; },
+      error: (e) => { this.reportEmailError = e.error?.message ?? 'Failed to send report.'; this.sendingReport = false; }
     });
   }
 

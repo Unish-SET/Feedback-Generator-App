@@ -29,6 +29,72 @@
             <p class="text-surface-500 text-sm">Your feedback has been recorded.</p>
           </div>
         </div>
+      } @else if (isInviteOnly() && otpStep() !== 'verified') {
+        <div class="max-w-md mx-auto py-20">
+          <div class="card p-8 slide-up space-y-4">
+            <h2 class="text-xl font-semibold text-surface-900">Survey Access</h2>
+            <p class="text-surface-500 text-sm">
+              This survey is invite-only. Enter your invited email to receive an OTP.
+            </p>
+
+            @if (otpError()) {
+              <div class="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-red-600 text-sm">
+                {{ otpError() }}
+              </div>
+            }
+
+            @if (otpStep() === 'email') {
+              <div class="space-y-1">
+                <label class="text-sm font-medium text-surface-700">Email address</label>
+                <input type="email" class="input w-full"
+                       [class.border-red-400]="otpEmailError()"
+                       placeholder="your@email.com"
+                       [value]="otpEmail()"
+                       (input)="otpEmail.set($any($event.target).value); otpEmailError.set('')"
+                       (keyup.enter)="sendOtp()" />
+                @if (otpEmailError()) {
+                  <p class="text-red-500 text-xs mt-1">{{ otpEmailError() }}</p>
+                }
+              </div>
+              <button class="btn-primary w-full" (click)="sendOtp()"
+                      [disabled]="otpSending() || !otpEmail().trim()">
+                {{ otpSending() ? 'Sending…' : 'Send OTP' }}
+              </button>
+            }
+
+            @if (otpStep() === 'otp') {
+              <p class="text-sm text-surface-500">
+                Code sent to <strong>{{ otpEmail() }}</strong>. Check your inbox.
+              </p>
+              <div class="space-y-1">
+                <label class="text-sm font-medium text-surface-700">Enter 6-digit OTP</label>
+                <input type="text" inputmode="numeric"
+                       class="input w-full text-center text-2xl tracking-[0.5em] font-mono"
+                       [class.border-red-400]="otpCodeError()"
+                       maxlength="6" placeholder="000000"
+                       [value]="otpCode()"
+                       (input)="onOtpInput($event)"
+                       (keyup.enter)="verifyOtp()" />
+                @if (otpCodeError()) {
+                  <p class="text-red-500 text-xs mt-1">{{ otpCodeError() }}</p>
+                }
+              </div>
+              <button class="btn-primary w-full" (click)="verifyOtp()"
+                      [disabled]="otpVerifying() || otpCode().length !== 6">
+                {{ otpVerifying() ? 'Verifying…' : 'Verify OTP' }}
+              </button>
+              <button class="text-sm text-brand-500 underline w-full text-center"
+                      (click)="otpStep.set('email'); otpCode.set(''); otpError.set('')">
+                Use a different email
+              </button>
+              @if (otpAttempts() > 0) {
+                <p class="text-xs text-amber-500 text-center">
+                  {{ 5 - otpAttempts() }} attempt(s) remaining before lockout.
+                </p>
+              }
+            }
+          </div>
+        </div>
       } @else if (survey()) {
         <div class="max-w-2xl mx-auto space-y-6 slide-up">
           <!-- Survey Header -->
