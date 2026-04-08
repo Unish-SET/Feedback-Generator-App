@@ -1,6 +1,6 @@
     <div class="space-y-6 slide-up">
 
-      <div class="sticky top-0 z-10 -mx-4 lg:-mx-6 px-4 lg:px-6 py-3 bg-surface-50/95 backdrop-blur-sm border-b border-surface-100 mb-2">
+      <div class="sticky top-0 z-10 -mx-4 lg:-mx-6 px-4 lg:px-6 py-3 bg-surface-50 border-b border-surface-100 mb-2">
         <div class="max-w-7xl mx-auto">
           <h1 class="text-xl font-bold text-surface-900 leading-none">Admin Panel</h1>
           <p class="text-surface-400 text-xs mt-1">Manage users, surveys, and audit logs</p>
@@ -62,8 +62,12 @@
               <option value="Admin">Admin</option>
               <option value="Creator">Creator</option>
             </select>
-            <input id="user-date-from" name="user-date-from" type="date" class="input text-sm w-40" [(ngModel)]="userFromDate" (ngModelChange)="loadUsers()" aria-label="Joined from" />
-            <input id="user-date-to" name="user-date-to" type="date" class="input text-sm w-40" [(ngModel)]="userToDate" (ngModelChange)="loadUsers()" aria-label="Joined to" />
+            <input id="user-date-from" name="user-date-from" type="date" class="input text-sm w-40"
+              [(ngModel)]="userFromDate" [max]="userToDate || today"
+              (ngModelChange)="onUserFromDateChange()" aria-label="Joined from" />
+            <input id="user-date-to" name="user-date-to" type="date" class="input text-sm w-40"
+              [(ngModel)]="userToDate" [min]="userFromDate" [max]="today"
+              (ngModelChange)="loadUsers()" aria-label="Joined to" />
             <button (click)="loadUsers()" class="btn-secondary btn-sm px-3" title="Refresh">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
@@ -202,8 +206,12 @@
               <option value="true">Deleted Only</option>
               <option value="">All Surveys</option>
             </select>
-            <input id="admin-survey-from" name="admin-survey-from" type="date" class="input text-sm w-40" [(ngModel)]="surveyFromDate" (ngModelChange)="loadAdminSurveys()" aria-label="Created from" />
-            <input id="admin-survey-to" name="admin-survey-to" type="date" class="input text-sm w-40" [(ngModel)]="surveyToDate" (ngModelChange)="loadAdminSurveys()" aria-label="Created to" />
+            <input id="admin-survey-from" name="admin-survey-from" type="date" class="input text-sm w-40"
+              [(ngModel)]="surveyFromDate" [max]="surveyToDate || today"
+              (ngModelChange)="onSurveyFromDateChange()" aria-label="Created from" />
+            <input id="admin-survey-to" name="admin-survey-to" type="date" class="input text-sm w-40"
+              [(ngModel)]="surveyToDate" [min]="surveyFromDate" [max]="today"
+              (ngModelChange)="loadAdminSurveys()" aria-label="Created to" />
             <button (click)="loadAdminSurveys()" class="btn-secondary btn-sm px-3" title="Refresh">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
@@ -315,8 +323,12 @@
               <option value="">All Entities</option>
               @for (e of auditMeta().entities; track e) { <option [value]="e">{{ e }}</option> }
             </select>
-            <input id="audit-date-from" name="audit-date-from" type="date" class="input text-sm w-36" [(ngModel)]="auditFromDate" (ngModelChange)="loadAuditLogs()" aria-label="From date" />
-            <input id="audit-date-to" name="audit-date-to" type="date" class="input text-sm w-36" [(ngModel)]="auditToDate" (ngModelChange)="loadAuditLogs()" aria-label="To date" />
+            <input id="audit-date-from" name="audit-date-from" type="date" class="input text-sm w-36"
+              [(ngModel)]="auditFromDate" [max]="auditToDate || today"
+              (ngModelChange)="onAuditFromDateChange()" aria-label="From date" />
+            <input id="audit-date-to" name="audit-date-to" type="date" class="input text-sm w-36"
+              [(ngModel)]="auditToDate" [min]="auditFromDate" [max]="today"
+              (ngModelChange)="loadAuditLogs()" aria-label="To date" />
             <button (click)="loadAuditLogs()" class="btn-secondary btn-sm px-3" title="Refresh">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>

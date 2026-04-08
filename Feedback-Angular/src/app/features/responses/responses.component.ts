@@ -31,6 +31,8 @@ export class ResponsesComponent implements OnInit, OnDestroy {
 
   readonly id = input<string>('');
 
+  readonly today = new Date().toISOString().split('T')[0];
+
   // ─── Filter form ─────────────────────────────────────────────────────────
   readonly filterForm = this.fb.nonNullable.group({
     dateFrom: [''],
@@ -119,6 +121,13 @@ export class ResponsesComponent implements OnInit, OnDestroy {
 
   clearFilters(): void {
     this.filterForm.reset({ dateFrom: '', dateTo: '', userId: '' });
+  }
+
+  onDateFromChange(): void {
+    const { dateFrom, dateTo } = this.filterForm.value;
+    if (dateTo && dateFrom && dateTo < dateFrom) {
+      this.filterForm.patchValue({ dateTo: dateFrom });
+    }
   }
 
   changePage(page: number): void {

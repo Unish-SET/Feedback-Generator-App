@@ -33,6 +33,8 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
 
   readonly id = input<string>('');
 
+  readonly today = new Date().toISOString().split('T')[0];
+
   // ─── Filter form ─────────────────────────────────────────────────────────
   readonly filterForm = this.fb.nonNullable.group({
     dateFrom: [''],
@@ -117,6 +119,13 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
 
   clearFilters(): void {
     this.filterForm.reset({ dateFrom: '', dateTo: '' });
+  }
+
+  onDateFromChange(): void {
+    const { dateFrom, dateTo } = this.filterForm.value;
+    if (dateTo && dateFrom && dateTo < dateFrom) {
+      this.filterForm.patchValue({ dateTo: dateFrom });
+    }
   }
 
   // ─── Chart management ─────────────────────────────────────────────────────

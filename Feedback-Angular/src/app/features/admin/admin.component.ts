@@ -42,6 +42,8 @@ export class AdminComponent implements OnInit {
 
   readonly activeTab = signal<AdminTab>('users');
 
+  readonly today = new Date().toISOString().split('T')[0];
+
   readonly loading          = signal(true);
   readonly usersFiltering   = signal(false);
   readonly enrichedUsers    = signal<EnrichedUser[]>([]);
@@ -150,6 +152,13 @@ export class AdminComponent implements OnInit {
   }
 
   onUserSearchChange(): void { this.userSearchSubject.next(this.userSearch); }
+
+  onUserFromDateChange(): void {
+    if (this.userToDate && this.userToDate < this.userFromDate) {
+      this.userToDate = this.userFromDate;
+    }
+    this.loadUsers();
+  }
 
   userPageChange(page: number): void {
     if (page < 1 || page > this.userTotalPages()) return;
@@ -277,6 +286,13 @@ export class AdminComponent implements OnInit {
 
   onSurveySearchChange(): void { this.surveySearchSubject.next(this.surveySearch); }
 
+  onSurveyFromDateChange(): void {
+    if (this.surveyToDate && this.surveyToDate < this.surveyFromDate) {
+      this.surveyToDate = this.surveyFromDate;
+    }
+    this.loadAdminSurveys();
+  }
+
   surveyPageChange(page: number): void {
     if (page < 1 || page > this.surveyTotalPages()) return;
     this.surveyPage.set(page);
@@ -359,6 +375,13 @@ export class AdminComponent implements OnInit {
   }
 
   onSearchChange(): void { this.searchSubject.next(this.auditSearch); }
+
+  onAuditFromDateChange(): void {
+    if (this.auditToDate && this.auditToDate < this.auditFromDate) {
+      this.auditToDate = this.auditFromDate;
+    }
+    this.loadAuditLogs();
+  }
 
   auditPageChange(page: number): void {
     if (page < 1 || page > this.auditTotalPages()) return;

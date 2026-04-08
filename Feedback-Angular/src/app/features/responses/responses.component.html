@@ -1,7 +1,7 @@
 
     <div class="space-y-6 slide-up">
       <!-- Sticky Page Header -->
-      <div class="sticky top-0 z-10 -mx-4 lg:-mx-6 px-4 lg:px-6 py-3 bg-surface-50/95 backdrop-blur-sm border-b border-surface-100 mb-2">
+      <div class="sticky top-0 z-10 -mx-4 lg:-mx-6 px-4 lg:px-6 py-3 bg-surface-50 border-b border-surface-100 mb-2">
         <div class="flex items-center justify-between gap-3 flex-wrap max-w-7xl mx-auto">
           <div>
             <div class="flex items-center gap-1.5 text-xs text-surface-400 mb-0.5">
@@ -27,9 +27,15 @@
       <div [formGroup]="filterForm" class="card p-4">
         <div class="flex flex-wrap gap-3 items-center">
           <span class="text-xs text-surface-400 font-medium">Date range:</span>
-          <input id="resp-date-from" name="resp-date-from" type="date" formControlName="dateFrom" class="input text-sm w-40" aria-label="Submitted from" />
+          <input id="resp-date-from" name="resp-date-from" type="date" formControlName="dateFrom"
+            [max]="formSnap().dateTo || today"
+            (change)="onDateFromChange()"
+            class="input text-sm w-40" aria-label="Submitted from" />
           <span class="text-xs text-surface-400">to</span>
-          <input id="resp-date-to" name="resp-date-to" type="date" formControlName="dateTo" class="input text-sm w-40" aria-label="Submitted to" />
+          <input id="resp-date-to" name="resp-date-to" type="date" formControlName="dateTo"
+            [min]="formSnap().dateFrom"
+            [max]="today"
+            class="input text-sm w-40" aria-label="Submitted to" />
           @if (formSnap().dateFrom || formSnap().dateTo) {
             <button (click)="clearFilters()" class="btn-ghost btn-sm text-surface-400">Clear</button>
           }

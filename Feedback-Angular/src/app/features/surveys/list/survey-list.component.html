@@ -2,7 +2,7 @@
     <div class="space-y-6 slide-up">
 
       <!-- Header -->
-      <div class="sticky top-0 z-10 -mx-4 lg:-mx-6 px-4 lg:px-6 py-3 bg-surface-50/95 backdrop-blur-sm border-b border-surface-100 mb-2">
+      <div class="sticky top-0 z-30 -mx-4 lg:-mx-6 px-4 lg:px-6 py-3 bg-surface-50 border-b border-surface-100 mb-2">
         <div class="flex items-center justify-between gap-4 max-w-7xl mx-auto">
           <div>
             <h1 class="text-xl font-bold text-surface-900 leading-none">Surveys</h1>
@@ -53,9 +53,18 @@
         </div>
         <div class="flex flex-col sm:flex-row gap-3 items-center">
           <span class="text-xs text-surface-400 font-medium whitespace-nowrap">Date range:</span>
-          <input id="survey-date-from" name="survey-date-from" type="date" formControlName="dateFrom" class="input text-sm sm:w-40" aria-label="From date"/>
+          <input id="survey-date-from" name="survey-date-from" type="date" formControlName="dateFrom"
+            [max]="formSnap().dateTo || today"
+            (change)="onDateFromChange()"
+            class="input text-sm sm:w-40" aria-label="From date"/>
           <span class="text-xs text-surface-400">to</span>
-          <input id="survey-date-to" name="survey-date-to" type="date" formControlName="dateTo" class="input text-sm sm:w-40" aria-label="To date"/>
+          <input id="survey-date-to" name="survey-date-to" type="date" formControlName="dateTo"
+            [min]="formSnap().dateFrom"
+            [max]="today"
+            class="input text-sm sm:w-40" aria-label="To date"/>
+          @if (filterForm.hasError('dateOrder')) {
+            <span class="text-red-500 text-xs">End date can't be before start date</span>
+          }
           @if (formSnap().dateFrom || formSnap().dateTo) {
             <button (click)="clearDates()" class="btn-ghost btn-sm text-surface-400">Clear dates</button>
           }

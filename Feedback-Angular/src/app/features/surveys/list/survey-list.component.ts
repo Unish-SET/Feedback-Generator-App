@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, AbstractControl } from '@angular/forms';
 import { Subject, merge, EMPTY } from 'rxjs';
 import {
   catchError, debounceTime, distinctUntilChanged,
@@ -14,6 +14,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { SurveyService } from '../../../core/services/survey.service';
 import { ToastService }   from '../../../core/services/toast.service';
 import { AuthService }    from '../../../core/services/auth.service';
+import { ConfirmDialogService } from '../../../shared/services/confirm-dialog.service';
 import { SurveyListItem, SurveyState } from '../../../shared/models';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 
@@ -29,7 +30,10 @@ export class SurveyListComponent implements OnInit, OnDestroy {
   private readonly toast         = inject(ToastService);
   private readonly route         = inject(ActivatedRoute);
   private readonly fb            = inject(FormBuilder);
+  private readonly confirmDialog = inject(ConfirmDialogService);
   readonly auth                  = inject(AuthService);
+
+  readonly today = new Date().toISOString().split('T')[0];
 
   // ─── Filter form ─────────────────────────────────────────────────────────
   // Single source of truth for all filter state; reactive pipeline reads this.
@@ -40,7 +44,20 @@ export class SurveyListComponent implements OnInit, OnDestroy {
     sortDir:  ['desc'],
     dateFrom: [''],
     dateTo:   ['']
-  });
+  }, { validators: (g: AbstractControl) => this.dateRangeValidator(g) });
+
+  private dateRangeValidator(group: AbstractControl) {
+    const from = group.get('dateFrom')?.value;
+    const to   = group.get('dateTo')?.value;
+    if (from && to && to < from) {
+      group.get('dateTo')?.setErrors({ dateOrder: true });
+      return { dateOrder: true };
+    }
+    if (group.get('dateTo')?.hasError('dateOrder')) {
+      group.get('dateTo')?.setErrors(null);
+    }
+    return null;
+  }
 
   // Expose form value as a signal so template expressions stay reactive under OnPush.
   readonly formSnap = toSignal(
@@ -181,6 +198,13 @@ export class SurveyListComponent implements OnInit, OnDestroy {
     this.filterForm.patchValue({ dateFrom: '', dateTo: '' });
   }
 
+  onDateFromChange(): void {
+    const { dateFrom, dateTo } = this.filterForm.value;
+    if (dateTo && dateFrom && dateTo < dateFrom) {
+      this.filterForm.patchValue({ dateTo: dateFrom });
+    }
+  }
+
   changePage(page: number): void {
     if (page < 1 || page > this.totalPages()) return;
     this.pageSubject$.next(page);
@@ -226,9 +250,20 @@ export class SurveyListComponent implements OnInit, OnDestroy {
     this.actionsInFlight.update(s => { const n = new Set(s); n.delete(id); return n; });
   }
 
-  toggleLive(s: SurveyListItem): void {
-    const next = s.state === 'Active' ? 'Inactive' : 'Active';
-    const msg  = next === 'Active' ? `"${s.title}" is now Live!` : `"${s.title}" paused.`;
+  async toggleLive(s: SurveyListItem): Promise<void> {
+    const next     = s.state === 'Active' ? 'Inactive' : 'Active';
+    const goingLive = next === 'Active';
+    const confirmed = await this.confirmDialog.confirm({
+      title:        goingLive ? 'Publish Survey?' : 'Pause Survey?',
+      message:      goingLive
+        ? `"${s.title}" will be live and accepting responses.`
+        : `"${s.title}" will be paused — no new responses.`,
+      confirmLabel: goingLive ? 'Publish' : 'Pause',
+      danger:       false
+    });
+    if (!confirmed) return;
+
+    const msg = goingLive ? `"${s.title}" is now Live!` : `"${s.title}" paused.`;
     this.startAction(s.id);
     this.surveyService.setState(s.id, next as SurveyState).subscribe({
       next: updated => {

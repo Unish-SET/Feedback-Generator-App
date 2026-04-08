@@ -1,7 +1,7 @@
 
     <div class="space-y-6 slide-up">
       <!-- Sticky Page Header -->
-      <div class="sticky top-0 z-10 -mx-4 lg:-mx-6 px-4 lg:px-6 py-3 bg-surface-50/95 backdrop-blur-sm border-b border-surface-100 mb-2">
+      <div class="sticky top-0 z-10 -mx-4 lg:-mx-6 px-4 lg:px-6 py-3 bg-surface-50 border-b border-surface-100 mb-2">
         <div class="flex items-center justify-between gap-3 flex-wrap max-w-7xl mx-auto">
           <div>
             <div class="flex items-center gap-1.5 text-xs text-surface-400 mb-0.5">
@@ -43,11 +43,17 @@
         <div class="flex flex-wrap gap-3 items-end">
           <div class="flex flex-col gap-1">
             <label for="analytics-date-from" class="text-xs text-surface-400">From</label>
-            <input id="analytics-date-from" name="analytics-date-from" type="date" formControlName="dateFrom" class="input text-sm w-40" />
+            <input id="analytics-date-from" name="analytics-date-from" type="date" formControlName="dateFrom"
+              [max]="formSnap().dateTo || today"
+              (change)="onDateFromChange()"
+              class="input text-sm w-40" />
           </div>
           <div class="flex flex-col gap-1">
             <label for="analytics-date-to" class="text-xs text-surface-400">To</label>
-            <input id="analytics-date-to" name="analytics-date-to" type="date" formControlName="dateTo" class="input text-sm w-40" />
+            <input id="analytics-date-to" name="analytics-date-to" type="date" formControlName="dateTo"
+              [min]="formSnap().dateFrom"
+              [max]="today"
+              class="input text-sm w-40" />
           </div>
           @if (formSnap().dateFrom || formSnap().dateTo) {
             <button (click)="clearFilters()" class="btn-ghost btn-sm text-surface-400 self-end">Clear</button>
