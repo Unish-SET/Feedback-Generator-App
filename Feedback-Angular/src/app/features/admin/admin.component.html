@@ -356,7 +356,7 @@
           <div class="table-wrapper">
             <table class="w-full text-sm">
               <thead>
-                <tr><th>Timestamp</th><th>User</th><th>Action</th><th>Entity</th><th class="hidden md:table-cell">ID</th><th class="hidden lg:table-cell">IP</th><th>Changes</th></tr>
+                <tr><th>Timestamp</th><th>User</th><th>Action</th><th>Entity</th><th class="hidden md:table-cell">ID</th></tr>
               </thead>
               <tbody>
                 @for (log of auditLogs(); track log.id) {
@@ -369,12 +369,6 @@
                     <td><span [class]="actionBadgeClass(log.action)" class="badge text-xs">{{ log.action }}</span></td>
                     <td class="text-surface-700 font-medium">{{ log.entityName }}</td>
                     <td class="hidden md:table-cell text-surface-400 text-xs">{{ log.entityId ?? '—' }}</td>
-                    <td class="hidden lg:table-cell text-surface-400 text-xs">{{ log.ipAddress ?? '—' }}</td>
-                    <!-- <td>
-                      @if (log.changes) {
-                        <button (click)="viewChanges(log)" class="text-xs text-brand-600 hover:text-brand-800 underline underline-offset-2">View</button>
-                      } @else { <span class="text-surface-300 text-xs">—</span> }
-                    </td> -->
                   </tr>
                 }
               </tbody>

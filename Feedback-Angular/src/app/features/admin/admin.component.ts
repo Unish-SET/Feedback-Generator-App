@@ -351,7 +351,16 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  softDeleteSurvey(id: number): void {
+  async softDeleteSurvey(id: number): Promise<void> {
+    const survey = this.adminSurveys().find(s => s.id === id);
+    const confirmed = await this.confirmDialog.confirm({
+      title:        'Delete Survey?',
+      message:      `"${survey?.title ?? 'This survey'}" will be soft-deleted and hidden from users.`,
+      confirmLabel: 'Delete',
+      danger:       true
+    });
+    if (!confirmed) return;
+
     this.surveyActionId.set(id);
     this.adminSurveyService.softDelete(id).subscribe({
       next: () => {
@@ -363,8 +372,17 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  restoreSurvey(id: number, ev?: Event): void {
+  async restoreSurvey(id: number, ev?: Event): Promise<void> {
     ev?.stopPropagation();
+    const survey = this.adminSurveys().find(s => s.id === id);
+    const confirmed = await this.confirmDialog.confirm({
+      title:        'Restore Survey?',
+      message:      `"${survey?.title ?? 'This survey'}" will be restored and visible to its creator.`,
+      confirmLabel: 'Restore',
+      danger:       false
+    });
+    if (!confirmed) return;
+
     this.surveyActionId.set(id);
     this.adminSurveyService.restore(id).subscribe({
       next: () => {
