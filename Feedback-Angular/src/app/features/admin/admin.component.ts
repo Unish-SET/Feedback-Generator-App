@@ -170,9 +170,20 @@ export class AdminComponent implements OnInit {
     return this.enrichedUsers().filter(u => u.role === role).length;
   }
 
-  toggleStatus(user: EnrichedUser): void {
+  async toggleStatus(user: EnrichedUser): Promise<void> {
+    const activating = !user.isActive;
+    const confirmed  = await this.confirmDialog.confirm({
+      title:        activating ? 'Activate User?' : 'Deactivate User?',
+      message:      activating
+        ? `${user.username} will be able to log in and use the platform.`
+        : `${user.username} will be blocked from logging in.`,
+      confirmLabel: activating ? 'Activate' : 'Deactivate',
+      danger:       !activating
+    });
+    if (!confirmed) return;
+
     this.statusUserId.set(user.id);
-    this.userService.setStatus(user.id, !user.isActive).subscribe({
+    this.userService.setStatus(user.id, activating).subscribe({
       next: (updated) => {
         this.enrichedUsers.update(list => list.map(u => u.id === user.id ? { ...u, isActive: updated.isActive } : u));
         this.toast.success(`${user.username} ${updated.isActive ? 'activated' : 'deactivated'}.`);
@@ -182,8 +193,19 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  toggleRole(user: EnrichedUser): void {
-    const newRole = user.role === 'Admin' ? 'Creator' : 'Admin';
+  async toggleRole(user: EnrichedUser): Promise<void> {
+    const newRole    = user.role === 'Admin' ? 'Creator' : 'Admin';
+    const isPromoting = newRole === 'Admin';
+    const confirmed  = await this.confirmDialog.confirm({
+      title:        isPromoting ? 'Promote to Admin?' : 'Demote to Creator?',
+      message:      isPromoting
+        ? `${user.username} will gain full admin access.`
+        : `${user.username} will lose admin privileges.`,
+      confirmLabel: isPromoting ? 'Promote' : 'Demote',
+      danger:       !isPromoting
+    });
+    if (!confirmed) return;
+
     this.actionUserId.set(user.id);
     this.userService.updateRole(user.id, { role: newRole }).subscribe({
       next: (updated) => {
@@ -303,7 +325,21 @@ export class AdminComponent implements OnInit {
     this.adminSurveyService.getDetail(id).subscribe(d => this.surveyDetail.set(d));
   }
 
-  setSurveyState(id: number, state: 'Inactive' | 'Active' | 'Closed'): void {
+  async setSurveyState(id: number, state: 'Inactive' | 'Active' | 'Closed'): Promise<void> {
+    const labels:   Record<string, string> = { Inactive: 'Pause', Active: 'Publish', Closed: 'Close' };
+    const messages: Record<string, string> = {
+      Inactive: 'This survey will be paused.',
+      Active:   'This survey will go live and accept responses.',
+      Closed:   'This survey will be permanently closed.'
+    };
+    const confirmed = await this.confirmDialog.confirm({
+      title:        `${labels[state]} Survey?`,
+      message:      messages[state],
+      confirmLabel: labels[state],
+      danger:       state === 'Closed'
+    });
+    if (!confirmed) return;
+
     this.surveyActionId.set(id);
     this.adminSurveyService.setState(id, state).subscribe({
       next: () => {

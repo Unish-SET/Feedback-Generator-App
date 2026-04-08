@@ -135,7 +135,7 @@
       <div class="main-content flex-1 flex flex-col overflow-hidden">
 
         <!-- Header -->
-        <header class="relative z-10 flex-shrink-0 flex items-center px-4 lg:px-6 gap-3 bg-white"
+        <header class="relative flex-shrink-0 flex items-center px-4 lg:px-6 gap-3 bg-white"
           style="height:64px; border-bottom:1px solid #e2e8f0">
 
           <button class="w-9 h-9 flex items-center justify-center rounded-lg text-surface-500 hover:bg-surface-100 transition-colors lg:hidden flex-shrink-0"
@@ -166,7 +166,7 @@
           <div class="flex-1"></div>
 
           <!-- Right: avatar + profile dropdown -->
-          <div class="relative">
+          <div class="relative z-50">
             <button
               (click)="profileOpen.set(!profileOpen())"
               class="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold focus:outline-none"

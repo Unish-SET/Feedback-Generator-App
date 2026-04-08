@@ -277,7 +277,15 @@ export class SurveyListComponent implements OnInit, OnDestroy {
     });
   }
 
-  reopen(s: SurveyListItem): void {
+  async reopen(s: SurveyListItem): Promise<void> {
+    const confirmed = await this.confirmDialog.confirm({
+      title:        'Reopen Survey?',
+      message:      `"${s.title}" will move back to Editing (Inactive).`,
+      confirmLabel: 'Reopen',
+      danger:       false
+    });
+    if (!confirmed) return;
+
     this.startAction(s.id);
     this.surveyService.setState(s.id, 'Inactive').subscribe({
       next: updated => {
@@ -291,7 +299,15 @@ export class SurveyListComponent implements OnInit, OnDestroy {
     });
   }
 
-  close(s: SurveyListItem): void {
+  async close(s: SurveyListItem): Promise<void> {
+    const confirmed = await this.confirmDialog.confirm({
+      title:        'Close Survey?',
+      message:      `"${s.title}" will stop accepting responses permanently.`,
+      confirmLabel: 'Close Survey',
+      danger:       true
+    });
+    if (!confirmed) return;
+
     this.startAction(s.id);
     this.surveyService.setState(s.id, 'Closed').subscribe({
       next: updated => {
