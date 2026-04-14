@@ -19,6 +19,10 @@ namespace FeedBackApp.Models
         [ForeignKey("UserId")]
         public User? User { get; set; }
 
+        /// <summary>Stable browser UUID sent by anonymous respondents to prevent duplicate submissions.</summary>
+        [MaxLength(64)]
+        public string? AnonToken { get; set; }
+
         public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation

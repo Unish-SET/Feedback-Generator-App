@@ -25,7 +25,7 @@ namespace FeedBackApp.Services
             _responseRepo = responseRepo;
         }
 
-        public async Task<ResponseListDto> SubmitAsync(Guid publicToken, SubmitResponseDto dto, int? userId)
+        public async Task<ResponseListDto> SubmitAsync(Guid publicToken, SubmitResponseDto dto, int? userId, string? anonToken = null)
         {
             // 1. Validate survey exists
             var survey = await _surveyRepo.GetQueryable()
@@ -62,6 +62,16 @@ namespace FeedBackApp.Services
                     throw new ConflictException("You have already submitted a response for this survey.");
             }
 
+            // 5b. Duplicate check for anonymous users via browser token
+            if (!userId.HasValue && !string.IsNullOrWhiteSpace(anonToken))
+            {
+                var duplicate = await _responseRepo.AnyAsync(
+                    r => r.SurveyId == survey.Id && r.AnonToken == anonToken);
+
+                if (duplicate)
+                    throw new ConflictException("You have already submitted a response for this survey.");
+            }
+
             // 6. Validate required questions
             var requiredQuestionIds = survey.Questions
                 .Where(q => q.IsRequired)
@@ -91,6 +101,7 @@ namespace FeedBackApp.Services
             {
                 SurveyId    = survey.Id,
                 UserId      = userId,
+                AnonToken   = userId == null ? anonToken : null,
                 SubmittedAt = DateTime.UtcNow,
                 Answers     = dto.Answers
                     .Where(a => survey.Questions.Any(q => q.Id == a.QuestionId))

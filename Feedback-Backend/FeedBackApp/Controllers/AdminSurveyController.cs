@@ -21,7 +21,6 @@ namespace FeedBackApp.Controllers
         private string GetIp()       => HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
         private string GetCorrelId() => HttpContext.Items["CorrelationId"]?.ToString() ?? string.Empty;
 
-        /// <summary>GET /api/admin/surveys — all surveys with pagination, search, filters.</summary>
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] AdminSurveyFilterParams filter)
         {
@@ -29,7 +28,6 @@ namespace FeedBackApp.Controllers
             return Ok(new { success = true, data = result });
         }
 
-        /// <summary>GET /api/admin/surveys/stats — TotalSurveys, ActiveSurveys, DeletedSurveys, TotalResponses.</summary>
         [HttpGet("stats")]
         public async Task<IActionResult> GetStats()
         {
@@ -37,7 +35,7 @@ namespace FeedBackApp.Controllers
             return Ok(new { success = true, data = result });
         }
 
-        /// <summary>GET /api/admin/surveys/{id} — full survey detail including all versions.</summary>
+       
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDetail(int id)
         {
@@ -49,13 +47,7 @@ namespace FeedBackApp.Controllers
             catch (NotFoundException ex) { return NotFound(new { success = false, message = ex.Message }); }
         }
 
-        /// <summary>
-        /// PATCH /api/admin/surveys/{id}/state
-        /// Admin can force any state: Inactive, Active, Closed.
-        /// Body: { "state": "Active" }
-        /// ALIGN-02: renamed from /status → /state and body field "status" → "state"
-        /// to match the domain model and the regular SurveyController endpoint.
-        /// </summary>
+        
         [HttpPatch("{id}/state")]
         public async Task<IActionResult> SetState(int id, [FromBody] SetSurveyStateDto dto)
         {
@@ -68,7 +60,6 @@ namespace FeedBackApp.Controllers
             catch (BadRequestException ex) { return BadRequest(new { success = false, message = ex.Message }); }
         }
 
-        /// <summary>PATCH /api/admin/surveys/{id}/restore — undo soft-delete.</summary>
         [HttpPatch("{id}/restore")]
         public async Task<IActionResult> Restore(int id)
         {
@@ -81,7 +72,6 @@ namespace FeedBackApp.Controllers
             catch (BadRequestException ex) { return BadRequest(new { success = false, message = ex.Message }); }
         }
 
-        /// <summary>DELETE /api/admin/surveys/{id} — soft-delete with audit log.</summary>
         [HttpDelete("{id}")]
         public async Task<IActionResult> SoftDelete(int id)
         {

@@ -19,7 +19,6 @@ namespace FeedBackApp.Controllers
         private int    GetUserId()   => int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : 0;
         private string GetUserRole() => User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
 
-        /// <summary>GET /api/question-bank — list bank questions with optional filters.</summary>
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] BankQuestionFilterParams filter)
         {
@@ -27,7 +26,6 @@ namespace FeedBackApp.Controllers
             return Ok(new { success = true, data = result });
         }
 
-        /// <summary>GET /api/question-bank/{id}</summary>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -35,7 +33,6 @@ namespace FeedBackApp.Controllers
             return Ok(new { success = true, data = result });
         }
 
-        /// <summary>POST /api/question-bank — add a question to the bank.</summary>
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateBankQuestionDto dto)
         {
@@ -43,7 +40,6 @@ namespace FeedBackApp.Controllers
             return StatusCode(201, new { success = true, data = result });
         }
 
-        /// <summary>PUT /api/question-bank/{id} — update a bank question.</summary>
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateBankQuestionDto dto)
         {
@@ -51,7 +47,6 @@ namespace FeedBackApp.Controllers
             return Ok(new { success = true, data = result });
         }
 
-        /// <summary>DELETE /api/question-bank/{id} — soft-delete a bank question.</summary>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -59,10 +54,7 @@ namespace FeedBackApp.Controllers
             return Ok(new { success = true, message = "Bank question deleted." });
         }
 
-        /// <summary>
-        /// POST /api/question-bank/clone-into-survey
-        /// Clone one or more bank questions into a Draft survey.
-        /// </summary>
+        
         [HttpPost("clone-into-survey")]
         public async Task<IActionResult> CloneIntoSurvey([FromBody] CloneFromBankDto dto)
         {

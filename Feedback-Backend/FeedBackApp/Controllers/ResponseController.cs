@@ -33,7 +33,12 @@ namespace FeedBackApp.Controllers
                     userId = parsed;
             }
 
-            var result = await _responseService.SubmitAsync(publicToken, dto, userId);
+            // Read anonymous browser token for duplicate prevention
+            var anonToken = userId == null
+                ? Request.Headers["X-Anon-Id"].FirstOrDefault()
+                : null;
+
+            var result = await _responseService.SubmitAsync(publicToken, dto, userId, anonToken);
             return StatusCode(201, new { success = true, data = result });
         }
 

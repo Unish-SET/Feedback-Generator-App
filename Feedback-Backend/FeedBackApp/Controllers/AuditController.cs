@@ -15,17 +15,15 @@ namespace FeedBackApp.Controllers
 
         public AuditController(FeedBackDbContext db) => _db = db;
 
-        /// <summary>
-        /// GET /api/audit?page=1&pageSize=20&search=&action=&entity=&userId=&fromDate=&toDate=
-        /// </summary>
+       
         [HttpGet]
         public async Task<IActionResult> GetLogs([FromQuery] AuditFilterParams filter)
         {
-            // PaginationParams already caps PageSize at 50 and defaults PageNumber to 1
+           
             var page     = filter.PageNumber;
             var pageSize = filter.PageSize;
 
-            // Left join — keeps logs where UserId is null or user was deleted
+         
             var query = _db.AuditLogs
                 .GroupJoin(
                     _db.Users.IgnoreQueryFilters(),
@@ -37,7 +35,6 @@ namespace FeedBackApp.Controllers
                     (x, user) => new { x.log, Username = user != null ? user.Username : "System" })
                 .AsQueryable();
 
-            // ── Filters ───────────────────────────────────────────────────────
             if (!string.IsNullOrWhiteSpace(filter.Search))
                 query = query.Where(x =>
                     x.log.Action.Contains(filter.Search)     ||
@@ -99,7 +96,6 @@ namespace FeedBackApp.Controllers
             });
         }
 
-        /// <summary>GET /api/audit/meta — distinct actions and entities for filter dropdowns.</summary>
         [HttpGet("meta")]
         public async Task<IActionResult> GetMeta()
         {

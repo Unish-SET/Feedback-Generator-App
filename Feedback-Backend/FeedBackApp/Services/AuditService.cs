@@ -5,11 +5,7 @@ using System.Text.Json;
 
 namespace FeedBackApp.Services
 {
-    /// <summary>
-    /// Writes AuditLog rows using its own independent DB connection via
-    /// IAuditDbContextFactory — so audit writes never share a transaction
-    /// with the business operation, and a failed audit never crashes the caller.
-    /// </summary>
+    
     public class AuditService : IAuditService
     {
         private readonly IAuditDbContextFactory _dbFactory;

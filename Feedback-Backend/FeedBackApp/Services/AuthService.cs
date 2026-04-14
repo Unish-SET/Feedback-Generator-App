@@ -50,14 +50,7 @@ namespace FeedBackApp.Services
 
             var token = GenerateToken(user);
             _ = _audit.LogAsync("Register", "User", user.Id.ToString(), user.Id);
-            return new AuthResponseDto
-            {
-                Token    = token,
-                UserId   = user.Id,
-                Username = user.Username,
-                Email    = user.Email,
-                Role     = user.Role.ToString()
-            };
+            return new AuthResponseDto { Token = token };
         }
 
         public async Task<AuthResponseDto> LoginAsync(LoginDto dto)
@@ -78,14 +71,7 @@ namespace FeedBackApp.Services
 
             var token = GenerateToken(user);
             _ = _audit.LogAsync("Login", "User", user.Id.ToString(), user.Id);
-            return new AuthResponseDto
-            {
-                Token    = token,
-                UserId   = user.Id,
-                Username = user.Username,
-                Email    = user.Email,
-                Role     = user.Role.ToString()
-            };
+            return new AuthResponseDto { Token = token };
         }
 
         private string GenerateToken(User user)

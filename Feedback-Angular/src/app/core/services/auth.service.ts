@@ -11,6 +11,7 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly TOKEN_KEY = 'fsm_token';
+  private readonly ANON_ID_KEY = 'fsm_anon_id';
 
   // ─── Signals ──────────────────────────────────────────
   private readonly _user = signal<AuthUser | null>(null);
@@ -83,8 +84,6 @@ export class AuthService {
   }
 
   // ─── API Methods ───────────────────────────────────────
-  // ALIGN-03: backend now returns userId/username/email/role alongside the token,
-  // so we build AuthUser directly from the response — no JWT decoding required.
   login(req: LoginRequest): Observable<AuthResponse> {
     return this.http.post<ApiResponse<AuthResponse>>(
       `${environment.apiUrl}/auth/login`, req
@@ -92,14 +91,8 @@ export class AuthService {
       map(res => res.data),
       tap(data => {
         localStorage.setItem(this.TOKEN_KEY, data.token);
-        const exp = this.getTokenExp(data.token);
-        this._user.set({
-          userId:   data.userId,
-          username: data.username,
-          email:    data.email,
-          role:     data.role,
-          exp:      exp ?? 0
-        });
+        const user = this.decodeTokenForRestore(data.token);
+        if (user) this._user.set(user);
       })
     );
   }
@@ -111,14 +104,8 @@ export class AuthService {
       map(res => res.data),
       tap(data => {
         localStorage.setItem(this.TOKEN_KEY, data.token);
-        const exp = this.getTokenExp(data.token);
-        this._user.set({
-          userId:   data.userId,
-          username: data.username,
-          email:    data.email,
-          role:     data.role,
-          exp:      exp ?? 0
-        });
+        const user = this.decodeTokenForRestore(data.token);
+        if (user) this._user.set(user);
       })
     );
   }
@@ -138,5 +125,15 @@ export class AuthService {
     if (user && this.isTokenExpired(user.exp)) {
       this.logout();
     }
+  }
+
+  /** Returns a stable anonymous browser ID, creating one if it doesn't exist yet. */
+  getAnonId(): string {
+    let id = localStorage.getItem(this.ANON_ID_KEY);
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem(this.ANON_ID_KEY, id);
+    }
+    return id;
   }
 }

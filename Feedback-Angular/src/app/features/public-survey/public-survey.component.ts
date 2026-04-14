@@ -55,7 +55,7 @@ export class PublicSurveyComponent implements OnInit {
   }
 
   private submissionKey(publicToken: string): string {
-    const userId = this.authService.user()?.userId ?? 'anon';
+    const userId = this.authService.user()?.userId?.toString() ?? this.authService.getAnonId();
     return `survey_submitted_${userId}_${publicToken}`;
   }
   private markSubmitted(publicToken: string): void {

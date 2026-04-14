@@ -28,25 +28,21 @@ namespace FeedBackApp.Models.DTOs
     // ── Survey Filters ────────────────────────────────────────────────────────
     public class SurveyFilterParams : PaginationParams
     {
-        /// <summary>Filter by status: Draft, Active, Closed</summary>
+ 
         public string? Status { get; set; }
 
-        /// <summary>Case-insensitive title search</summary>
+ 
         public string? Search { get; set; }
 
-        /// <summary>Admin only — filter by creator user ID</summary>
+  
         public int? CreatedBy { get; set; }
 
-        /// <summary>Filter surveys whose StartDate is on or after this value (UTC)</summary>
         public DateTime? StartDateFrom { get; set; }
 
-        /// <summary>Filter surveys whose StartDate is on or before this value (UTC)</summary>
         public DateTime? StartDateTo { get; set; }
 
-        /// <summary>Sort field: createdAt (default), title, responseCount</summary>
         public string? SortBy { get; set; }
 
-        /// <summary>Sort direction: asc, desc (default)</summary>
         public string? SortDir { get; set; }
     }
 

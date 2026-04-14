@@ -381,13 +381,17 @@
           </div>
           <button type="button" (click)="toggleInviteOnly()" [disabled]="togglingInviteOnly"
                   class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
-                  [class]="survey()?.isInviteOnly ? 'bg-brand-600' : 'bg-surface-200'">
+                  [class]="(survey()?.isInviteOnly || pendingInviteOnly) ? 'bg-brand-600' : 'bg-surface-200'">
             <span class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform"
-                  [class]="survey()?.isInviteOnly ? 'translate-x-6' : 'translate-x-1'"></span>
+                  [class]="(survey()?.isInviteOnly || pendingInviteOnly) ? 'translate-x-6' : 'translate-x-1'"></span>
           </button>
         </div>
 
-        @if (survey()?.isInviteOnly) {
+        @if (inviteEmailError && !survey()?.isInviteOnly) {
+          <p class="text-red-500 text-xs mb-3">{{ inviteEmailError }}</p>
+        }
+
+        @if (survey()?.isInviteOnly || pendingInviteOnly) {
           <div class="border-t border-surface-100 pt-5 space-y-3">
             <h4 class="text-sm font-medium text-surface-700">Send Invites</h4>
             <p class="text-xs text-surface-400">Separate by newline, comma, or semicolon. Max 100 per send.</p>

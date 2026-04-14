@@ -34,7 +34,6 @@ namespace FeedBackApp.Services
             if (!RoleHelper.IsAdmin(role) && survey.CreatedBy != userId)
                 throw new ForbiddenException("You do not have access to this survey's analytics.");
 
-            // ── Response query with optional date range ────────────────────────
             var responseQuery = _responseRepo.GetQueryable()
                 .Where(r => r.SurveyId == surveyId);
 
@@ -44,17 +43,13 @@ namespace FeedBackApp.Services
             if (filter?.ToDate.HasValue == true)
                 responseQuery = responseQuery.Where(r => r.SubmittedAt <= filter.ToDate.Value.ToUniversalTime());
 
-            // BUG-09 FIX: original code ran responseQuery twice — once for CountAsync and once
-            // for Select(r => r.SubmittedAt).ToListAsync() — two full table scans.
-            // Single query: fetch all SubmittedAt values; derive both count and date grouping
-            // from the in-memory list. For large surveys this halves the DB round-trips here.
+   
             var submittedDates = await responseQuery
                 .Select(r => r.SubmittedAt)
                 .ToListAsync();
 
             var totalResponses = submittedDates.Count;
 
-            // ── Questions ─────────────────────────────────────────────────────
             var questions = await _questionRepo.GetQueryable()
                 .Include(q => q.Options)
                 .Include(q => q.Answers)
@@ -142,8 +137,7 @@ namespace FeedBackApp.Services
                 questionAnalytics.Add(qa);
             }
 
-            // ── Date-wise counts ──────────────────────────────────────────────
-            // submittedDates already fetched above — no second DB query needed
+           
             var dateWiseCounts = submittedDates
                 .GroupBy(d => d.Date)
                 .Select(g => new DateWiseCountDto

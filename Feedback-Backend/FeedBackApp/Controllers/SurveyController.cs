@@ -52,11 +52,7 @@ namespace FeedBackApp.Controllers
             return Ok(new { success = true, data = result });
         }
 
-        /// <summary>
-        /// Transition survey state.
-        /// Inactive → Active (Publish), Active → Inactive (Pause), Active/Inactive → Closed (permanent).
-        /// Closed surveys cannot be reopened.
-        /// </summary>
+        
         [HttpPatch("{id}/state")]
         public async Task<IActionResult> SetState(int id, [FromBody] SetSurveyStateDto dto)
         {
@@ -64,10 +60,7 @@ namespace FeedBackApp.Controllers
             return Ok(new { success = true, data = result });
         }
 
-        /// <summary>
-        /// Update survey schedule (startDate / endDate) regardless of state.
-        /// Works on Inactive, Active, and Closed surveys.
-        /// </summary>
+        
         [HttpPatch("{id}/schedule")]
         public async Task<IActionResult> UpdateSchedule(int id, [FromBody] UpdateSurveyScheduleDto dto)
         {

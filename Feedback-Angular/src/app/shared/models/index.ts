@@ -10,14 +10,9 @@ export interface RegisterRequest {
   password: string;
 }
 
-// Backend returns: { success: true, data: { token: "...", userId, username, email, role } }
+// Backend returns: { success: true, data: { token: "..." } }
 export interface AuthResponse {
   token: string;
-  // ALIGN-03: added — no longer need to JWT-decode to get user identity
-  userId: number;
-  username: string;
-  email: string;
-  role: 'Admin' | 'Creator';
 }
 
 export interface AuthUser {

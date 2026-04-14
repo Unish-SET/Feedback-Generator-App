@@ -34,7 +34,6 @@ namespace FeedBackApp.Services
             _logger         = logger;
         }
 
-        // ── CRUD ──────────────────────────────────────────────────────────────
 
         public async Task<BankQuestionDto> CreateAsync(CreateBankQuestionDto dto, int userId)
         {
@@ -73,7 +72,6 @@ namespace FeedBackApp.Services
             bq.Tag        = dto.Tag?.Trim();
             bq.UpdatedAt  = DateTime.UtcNow;
 
-            // Replace options atomically
             _bankOptionRepo.RemoveRange(bq.Options);
             bq.Options = BuildOptions(questionType, dto.Options);
 
@@ -96,7 +94,6 @@ namespace FeedBackApp.Services
 
         public async Task<BankQuestionDto> GetByIdAsync(int id, int userId, string role)
         {
-            // BUG-10 FIX: missing !b.IsDeleted — soft-deleted questions were still retrievable by ID
             var bq = await _bankRepo.GetQueryable()
                 .Include(b => b.Options)
                 .FirstOrDefaultAsync(b => b.Id == id && !b.IsDeleted);
@@ -104,8 +101,7 @@ namespace FeedBackApp.Services
             if (bq == null)
                 throw new NotFoundException($"Bank question {id} not found.");
 
-            // Enforce ownership — non-admins cannot read other users' bank questions.
-            // Without this, any Creator can enumerate the entire bank by iterating IDs.
+           
             if (!RoleHelper.IsAdmin(role) && bq.CreatedBy != userId)
                 throw new ForbiddenException("You do not have access to this bank question.");
 
@@ -118,13 +114,11 @@ namespace FeedBackApp.Services
             var page     = filter.PageNumber <= 0 ? 1 : filter.PageNumber;
             var pageSize = Math.Min(filter.PageSize <= 0 ? 20 : filter.PageSize, 50);
 
-            // BUG-10 FIX: missing !b.IsDeleted — soft-deleted questions appeared in list results
             var query = _bankRepo.GetQueryable()
                 .Include(b => b.Options)
                 .Where(b => !b.IsDeleted)
                 .AsQueryable();
 
-            // Non-admins only see their own bank questions
             if (!RoleHelper.IsAdmin(role))
                 query = query.Where(b => b.CreatedBy == userId);
 
@@ -194,7 +188,7 @@ namespace FeedBackApp.Services
             int nextOrder = (maxOrder ?? 0) + 1;
 
             // 3. Load all requested bank questions in ONE query — no N+1
-            // BUG-10 FIX: also exclude soft-deleted questions
+           
             var distinctIds = dto.BankQuestionIds.Distinct().ToList();
 
             var bankQuestions = await _bankRepo.GetQueryable()
@@ -371,9 +365,7 @@ namespace FeedBackApp.Services
             }
         }
 
-        /// <summary>
-        /// Produces a deterministic SHA256 hex string from the normalized question content.
-        /// </summary>
+        
         private static string ComputeQuestionHash(string text, string type, List<string> optionTexts)
         {
             var normalized = $"{text.Trim().ToLowerInvariant()}|{type.ToLowerInvariant()}|{string.Join("|", optionTexts.Select(o => o.Trim().ToLowerInvariant()))}";

@@ -31,11 +31,7 @@ namespace FeedBackApp.Controllers
             "application/octet-stream"                                            // some browsers send this for Excel
         };
 
-        /// <summary>
-        /// POST /api/questions/import-excel
-        /// Import questions from an Excel file.
-        /// Provide surveyId to add to a draft survey, addToQuestionBank=true to save in the bank, or both.
-        /// </summary>
+        
         [HttpPost("import-excel")]
         [RequestSizeLimit(10 * 1024 * 1024)] // 10 MB cap
         public async Task<IActionResult> ImportExcel(
@@ -74,10 +70,7 @@ namespace FeedBackApp.Controllers
             catch (ForbiddenException  ex) { return StatusCode(403, new { success = false, message = ex.Message }); }
         }
 
-        /// <summary>
-        /// GET /api/questions/import-template
-        /// Download the Excel template for bulk question import.
-        /// </summary>
+       
         [HttpGet("import-template")]
         public IActionResult GetTemplate()
         {

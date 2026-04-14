@@ -39,7 +39,8 @@ export class SurveyDetailComponent implements OnInit {
   inviteEmailError   = '';
   sendingInvites     = false;
   inviteSent         = false;
-  togglingInviteOnly = false;
+  togglingInviteOnly  = false;
+  pendingInviteOnly   = false;   // true = user toggled ON but hasn't sent invites yet
   readonly inviteList = signal<SurveyInviteItem[]>([]);
 
   get parsedEmails(): string[] {
@@ -150,6 +151,10 @@ export class SurveyDetailComponent implements OnInit {
         this.toast.error('Start date cannot be in the past.'); return;
       }
     }
+    if (this.step() === 2 && this.inviteOnly && this.emailPreviewList.length === 0) {
+      this.toast.error('Please add at least one email address for invite-only surveys.');
+      return;
+    }
     this.step.update(s => (s + 1) as 1 | 2 | 3);
   }
 
@@ -246,12 +251,32 @@ export class SurveyDetailComponent implements OnInit {
 
   toggleInviteOnly(): void {
     const current = this.survey()?.isInviteOnly ?? false;
+    const enablingInviteOnly = !current;
+
+    // If already in pending state and user toggles again → cancel
+    if (this.pendingInviteOnly) {
+      this.pendingInviteOnly = false;
+      this.inviteEmailError = '';
+      this.savedInviteEmails = '';
+      return;
+    }
+
+    // Turning ON with no existing invites → show email input first (pending state)
+    if (enablingInviteOnly && this.inviteList().length === 0) {
+      this.pendingInviteOnly = true;
+      this.inviteEmailError = 'Add at least one email and send invites to enable invite-only mode.';
+      return;
+    }
+
+    // Turning OFF or turning ON when invites already exist → call API directly
+    this.pendingInviteOnly = false;
+    this.inviteEmailError = '';
     this.togglingInviteOnly = true;
-    this.inviteService.setInviteOnly(this.surveyId, !current).subscribe({
+    this.inviteService.setInviteOnly(this.surveyId, enablingInviteOnly).subscribe({
       next: () => {
-        this.survey.update(s => s ? { ...s, isInviteOnly: !current } : s);
+        this.survey.update(s => s ? { ...s, isInviteOnly: enablingInviteOnly } : s);
         this.togglingInviteOnly = false;
-        this.toast.success(!current ? 'Survey set to invite-only.' : 'Invite-only disabled.');
+        this.toast.success(enablingInviteOnly ? 'Survey set to invite-only.' : 'Invite-only disabled.');
       },
       error: () => { this.togglingInviteOnly = false; }
     });
@@ -272,6 +297,20 @@ export class SurveyDetailComponent implements OnInit {
         this.savedInviteEmails = '';
         this.loadInvites(this.surveyId);
         this.toast.success('Invites sent.');
+
+        // If we were in pending state, now enable invite-only on the backend
+        if (this.pendingInviteOnly) {
+          this.pendingInviteOnly = false;
+          this.togglingInviteOnly = true;
+          this.inviteService.setInviteOnly(this.surveyId, true).subscribe({
+            next: () => {
+              this.survey.update(s => s ? { ...s, isInviteOnly: true } : s);
+              this.togglingInviteOnly = false;
+              this.toast.success('Survey set to invite-only.');
+            },
+            error: () => { this.togglingInviteOnly = false; }
+          });
+        }
       },
       error: (e) => { this.inviteEmailError = e.error?.message ?? 'Failed to send invites.'; this.sendingInvites = false; }
     });
